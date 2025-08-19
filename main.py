@@ -23,3 +23,6 @@ app.include_router(units.router, prefix="/api")
 @app.get("/")
 def read_root():
     return FileResponse('index.html')
+
+# Servir archivos estáticos si es necesario
+from fastapi.staticfiles import StaticFilesl')
