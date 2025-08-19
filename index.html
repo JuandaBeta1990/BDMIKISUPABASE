@@ -1,97 +1,237 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miki.ai API</title>
+    <title>Miki.ai - Plataforma de Gestión</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            font-family: 'Poppins', sans-serif;
+            background: #0a102a;
+            color: #e0e0e0;
         }
-        .container {
-            background-color: white;
-            padding: 30px;
+
+        /* Estilo para el efecto de vidrio (Glassmorphism) */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Fondo con gradiente y partículas sutiles */
+        .main-background {
+            background-image: radial-gradient(circle at 1% 1%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                              radial-gradient(circle at 99% 99%, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .api-info {
-            background-color: #e7f3ff;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-        .endpoints {
-            margin-top: 20px;
-        }
-        .endpoint {
-            background-color: #f9f9f9;
-            padding: 10px;
-            margin: 10px 0;
-            border-left: 4px solid #007bff;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>🚀 Miki.ai API</h1>
-        
-        <div class="api-info">
-            <h2>Bienvenido a la API de Miki.ai</h2>
-            <p>Esta es la API para la plataforma de gestión de proyectos inmobiliarios Miki.ai</p>
-        </div>
+<body class="main-background">
 
-        <div class="endpoints">
-            <h3>📚 Documentación de la API</h3>
-            <div class="endpoint">
-                <strong>Swagger UI:</strong> 
-                <a href="/docs" target="_blank">/docs</a>
+    <div class="relative min-h-screen lg:flex">
+        <!-- Barra Lateral de Navegación -->
+        <aside id="sidebar" class="bg-black/30 lg:bg-transparent fixed inset-y-0 left-0 w-64 z-30 transform -translate-x-full transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex-shrink-0">
+            <div class="glass-effect h-full m-0 lg:m-4 rounded-none lg:rounded-2xl flex flex-col">
+                <div class="flex items-center justify-center h-20 border-b border-white/10 flex-shrink-0">
+                    <h1 class="text-2xl font-bold text-white">Miki<span class="bg-red-600 px-2 rounded-md ml-1 text-white">ai</span></h1>
+                </div>
+                <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-white bg-white/10 rounded-lg">
+                        <i data-lucide="building-2" class="w-5 h-5 mr-3"></i>
+                        Proyectos
+                    </a>
+                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="home" class="w-5 h-5 mr-3"></i>
+                        Unidades
+                    </a>
+                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="users" class="w-5 h-5 mr-3"></i>
+                        Usuarios
+                    </a>
+                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="map-pin" class="w-5 h-5 mr-3"></i>
+                        Zonas
+                    </a>
+                     <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="settings" class="w-5 h-5 mr-3"></i>
+                        Configuración
+                    </a>
+                </nav>
+                <div class="p-4 border-t border-white/10 flex-shrink-0">
+                     <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="log-out" class="w-5 h-5 mr-3 text-red-500"></i>
+                        Cerrar Sesión
+                    </a>
+                </div>
             </div>
-            <div class="endpoint">
-                <strong>ReDoc:</strong> 
-                <a href="/redoc" target="_blank">/redoc</a>
-            </div>
-        </div>
+        </aside>
 
-        <div class="endpoints">
-            <h3>🔗 Endpoints Principales</h3>
-            <div class="endpoint">
-                <strong>Proyectos:</strong> 
-                <a href="/api/projects" target="_blank">/api/projects</a>
-            </div>
-            <div class="endpoint">
-                <strong>Zonas:</strong> 
-                <a href="/api/zones" target="_blank">/api/zones</a>
-            </div>
-            <div class="endpoint">
-                <strong>Unidades:</strong> 
-                <a href="/api/units" target="_blank">/api/units</a>
-            </div>
-            <div class="endpoint">
-                <strong>Dashboard:</strong> 
-                <a href="/api/dashboard-stats" target="_blank">/api/dashboard-stats</a>
-            </div>
-        </div>
+        <!-- Contenido Principal -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Cabecera -->
+            <header class="h-20 flex items-center justify-between px-4 sm:px-8">
+                 <!-- Botón de Menú para Móvil -->
+                <button id="menu-button" class="lg:hidden p-2 rounded-md text-gray-300 hover:bg-white/10">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
 
-        <div class="api-info">
-            <p><strong>Estado:</strong> ✅ API funcionando correctamente</p>
-            <p><strong>Versión:</strong> 1.0.0</p>
-        </div>
+                <div class="flex-1 hidden sm:block">
+                    <h2 class="text-xl md:text-2xl font-semibold text-white">Gestión de Proyectos</h2>
+                    <p class="text-xs md:text-sm text-gray-400">Aquí puedes ver, editar y crear nuevos proyectos.</p>
+                </div>
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <div class="relative">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"></i>
+                        <input type="text" placeholder="Buscar..." class="pl-10 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-red-500 w-32 sm:w-48 md:w-64 transition-all">
+                    </div>
+                    <button class="p-2 rounded-full hover:bg-white/10 transition-colors">
+                        <i data-lucide="bell" class="w-6 h-6 text-white"></i>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <img src="https://placehold.co/40x40/e2e8f0/334155?text=A" alt="Avatar de usuario" class="w-10 h-10 rounded-full">
+                        <div class="hidden md:block">
+                            <p class="font-semibold text-white text-sm">Admin</p>
+                            <p class="text-xs text-gray-400">rol: administrador</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Área de Contenido -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 sm:pt-4">
+                <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                        <h3 class="text-xl font-semibold text-white">Listado de Proyectos</h3>
+                        <button class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-red-600/20 w-full sm:w-auto">
+                            <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+                            Añadir Proyecto
+                        </button>
+                    </div>
+
+                    <!-- Tabla de Datos Responsiva -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left min-w-[640px]">
+                            <thead class="border-b border-white/20">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 font-medium">Nombre del Proyecto</th>
+                                    <th scope="col" class="px-6 py-3 font-medium">Zona</th>
+                                    <th scope="col" class="px-6 py-3 font-medium">Desarrollador</th>
+                                    <th scope="col" class="px-6 py-3 font-medium">Unidades</th>
+                                    <th scope="col" class="px-6 py-3 font-medium">Estado</th>
+                                    <th scope="col" class="px-6 py-3 font-medium text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Fila de ejemplo 1 -->
+                                <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+                                    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">Torre Kabil</td>
+                                    <td class="px-6 py-4">Cholul</td>
+                                    <td class="px-6 py-4">Inmobilia</td>
+                                    <td class="px-6 py-4">120</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-500/20 text-green-300">Activo</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center space-x-2 whitespace-nowrap">
+                                        <button class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Actualizar Proyecto"><i data-lucide="edit"></i></button>
+                                        <button class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Proyecto"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <!-- Fila de ejemplo 2 -->
+                                <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+                                    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">Altabrisa Residencial</td>
+                                    <td class="px-6 py-4">Altabrisa</td>
+                                    <td class="px-6 py-4">Grupo GIM</td>
+                                    <td class="px-6 py-4">85</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-500/20 text-yellow-300">En Pausa</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center space-x-2 whitespace-nowrap">
+                                        <button class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Actualizar Proyecto"><i data-lucide="edit"></i></button>
+                                        <button class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Proyecto"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                                <!-- Fila de ejemplo 3 -->
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">Country Towers</td>
+                                    <td class="px-6 py-4">Temozón Norte</td>
+                                    <td class="px-6 py-4">Inmobilia</td>
+                                    <td class="px-6 py-4">250</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-500/20 text-red-300">Vendido</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center space-x-2 whitespace-nowrap">
+                                        <button class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Actualizar Proyecto"><i data-lucide="edit"></i></button>
+                                        <button class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Proyecto"><i data-lucide="trash-2"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
+
+    <!-- Script para la navegación móvil -->
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const menuButton = document.getElementById('menu-button');
+
+        // Función para alternar la visibilidad del sidebar
+        const toggleSidebar = () => {
+            sidebar.classList.toggle('-translate-x-full');
+        };
+
+        // Evento para el botón del menú
+        menuButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evita que el click se propague al documento
+            toggleSidebar();
+        });
+
+        // Evento para cerrar el sidebar si se hace click fuera de él
+        document.addEventListener('click', (e) => {
+            // Si el sidebar está visible y el click fue fuera del sidebar y del botón del menú
+            if (!sidebar.classList.contains('-translate-x-full') && !sidebar.contains(e.target) && !menuButton.contains(e.target)) {
+                toggleSidebar();
+            }
+        });
+
+        // Inicializar Lucide Icons
+        lucide.createIcons();
+    </script>
 </body>
 </html>
