@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 from routers import projects, zones
 from routers import dashboard
 from routers import units
+import uvicorn
 
 app = FastAPI(
     title="Miki.ai API",

@@ -21,4 +21,4 @@ def get_db():
         yield conn
     finally:
         if conn:
-            conn.close()
+            conn.close())
