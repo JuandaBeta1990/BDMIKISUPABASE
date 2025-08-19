@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -53,6 +54,13 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal {
+            display: none;
+        }
+        .modal.active {
+            display: flex;
         }
     </style>
 </head>
@@ -116,7 +124,7 @@
                 <div class="flex items-center space-x-2 sm:space-x-4">
                     <div class="relative">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"></i>
-                        <input type="text" placeholder="Buscar..." class="pl-10 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-red-500 w-32 sm:w-48 md:w-64 transition-all">
+                        <input type="text" id="search-input" placeholder="Buscar..." class="pl-10 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-red-500 w-32 sm:w-48 md:w-64 transition-all">
                     </div>
                     <button class="p-2 rounded-full hover:bg-white/10 transition-colors">
                         <i data-lucide="bell" class="w-6 h-6 text-white"></i>
@@ -136,14 +144,19 @@
                 <div class="glass-effect rounded-2xl p-4 sm:p-6">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
                         <h3 class="text-xl font-semibold text-white">Listado de Proyectos</h3>
-                        <button class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-red-600/20 w-full sm:w-auto">
+                        <button id="add-project-btn" class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-red-600/20 w-full sm:w-auto">
                             <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
                             Añadir Proyecto
                         </button>
                     </div>
 
+                    <!-- Loading Spinner -->
+                    <div id="loading" class="flex justify-center items-center py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                    </div>
+
                     <!-- Tabla de Datos Responsiva -->
-                    <div class="overflow-x-auto">
+                    <div id="projects-table" class="overflow-x-auto" style="display: none;">
                         <table class="w-full text-sm text-left min-w-[640px]">
                             <thead class="border-b border-white/20">
                                 <tr>
@@ -151,87 +164,334 @@
                                     <th scope="col" class="px-6 py-3 font-medium">Zona</th>
                                     <th scope="col" class="px-6 py-3 font-medium">Desarrollador</th>
                                     <th scope="col" class="px-6 py-3 font-medium">Unidades</th>
-                                    <th scope="col" class="px-6 py-3 font-medium">Estado</th>
+                                    <th scope="col" class="px-6 py-3 font-medium">Crypto</th>
                                     <th scope="col" class="px-6 py-3 font-medium text-center">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- Fila de ejemplo 1 -->
-                                <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
-                                    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">Torre Kabil</td>
-                                    <td class="px-6 py-4">Cholul</td>
-                                    <td class="px-6 py-4">Inmobilia</td>
-                                    <td class="px-6 py-4">120</td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-500/20 text-green-300">Activo</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-center space-x-2 whitespace-nowrap">
-                                        <button class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Actualizar Proyecto"><i data-lucide="edit"></i></button>
-                                        <button class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Proyecto"><i data-lucide="trash-2"></i></button>
-                                    </td>
-                                </tr>
-                                <!-- Fila de ejemplo 2 -->
-                                <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
-                                    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">Altabrisa Residencial</td>
-                                    <td class="px-6 py-4">Altabrisa</td>
-                                    <td class="px-6 py-4">Grupo GIM</td>
-                                    <td class="px-6 py-4">85</td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-500/20 text-yellow-300">En Pausa</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-center space-x-2 whitespace-nowrap">
-                                        <button class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Actualizar Proyecto"><i data-lucide="edit"></i></button>
-                                        <button class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Proyecto"><i data-lucide="trash-2"></i></button>
-                                    </td>
-                                </tr>
-                                <!-- Fila de ejemplo 3 -->
-                                <tr class="hover:bg-white/5 transition-colors">
-                                    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">Country Towers</td>
-                                    <td class="px-6 py-4">Temozón Norte</td>
-                                    <td class="px-6 py-4">Inmobilia</td>
-                                    <td class="px-6 py-4">250</td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-500/20 text-red-300">Vendido</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-center space-x-2 whitespace-nowrap">
-                                        <button class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Actualizar Proyecto"><i data-lucide="edit"></i></button>
-                                        <button class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Proyecto"><i data-lucide="trash-2"></i></button>
-                                    </td>
-                                </tr>
+                            <tbody id="projects-tbody">
+                                <!-- Los proyectos se cargarán dinámicamente aquí -->
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mensaje cuando no hay proyectos -->
+                    <div id="no-projects" class="text-center py-8 text-gray-400" style="display: none;">
+                        <i data-lucide="folder-x" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                        <p>No hay proyectos disponibles</p>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Script para la navegación móvil -->
+    <!-- Modal para Crear/Editar Proyecto -->
+    <div id="project-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
+        <div class="glass-effect rounded-2xl p-6 m-4 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-semibold text-white">Nuevo Proyecto</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="project-form">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nombre del Proyecto *</label>
+                        <input type="text" id="project-name" name="name" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Desarrollador</label>
+                        <input type="text" id="project-developer" name="developer" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Total de Unidades</label>
+                        <input type="number" id="project-units" name="total_units" min="0" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Acepta Crypto</label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="project-crypto" name="accepts_crypto" class="mr-2">
+                            <span class="text-gray-300">Sí, acepta criptomonedas</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" id="cancel-btn" class="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        // Variables globales
+        let projects = [];
+        let editingProjectId = null;
+
+        // Elementos del DOM
         const sidebar = document.getElementById('sidebar');
         const menuButton = document.getElementById('menu-button');
+        const loading = document.getElementById('loading');
+        const projectsTable = document.getElementById('projects-table');
+        const projectsTbody = document.getElementById('projects-tbody');
+        const noProjects = document.getElementById('no-projects');
+        const searchInput = document.getElementById('search-input');
+        const addProjectBtn = document.getElementById('add-project-btn');
+        const projectModal = document.getElementById('project-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const projectForm = document.getElementById('project-form');
+        const closeModal = document.getElementById('close-modal');
+        const cancelBtn = document.getElementById('cancel-btn');
 
-        // Función para alternar la visibilidad del sidebar
-        const toggleSidebar = () => {
-            sidebar.classList.toggle('-translate-x-full');
-        };
+        // API Base URL
+        const API_BASE_URL = '/api';
 
-        // Evento para el botón del menú
+        // Función para hacer peticiones HTTP
+        async function apiRequest(url, options = {}) {
+            try {
+                const response = await fetch(API_BASE_URL + url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // Cargar proyectos desde la API
+        async function loadProjects() {
+            try {
+                loading.style.display = 'flex';
+                projectsTable.style.display = 'none';
+                noProjects.style.display = 'none';
+
+                projects = await apiRequest('/projects');
+                renderProjects();
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                showError('Error al cargar los proyectos');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Renderizar proyectos en la tabla
+        function renderProjects(filteredProjects = null) {
+            const projectsToRender = filteredProjects || projects;
+            
+            if (projectsToRender.length === 0) {
+                projectsTable.style.display = 'none';
+                noProjects.style.display = 'block';
+                return;
+            }
+
+            projectsTable.style.display = 'block';
+            noProjects.style.display = 'none';
+
+            projectsTbody.innerHTML = projectsToRender.map(project => `
+                <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">${project.name || 'Sin nombre'}</td>
+                    <td class="px-6 py-4">${project.zone_name || 'Sin zona'}</td>
+                    <td class="px-6 py-4">${project.developer || 'Sin desarrollador'}</td>
+                    <td class="px-6 py-4">${project.total_units || 0}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${project.accepts_crypto ? 'bg-green-500/20 text-green-300' : 'bg-gray-500/20 text-gray-300'}">
+                            ${project.accepts_crypto ? 'Sí' : 'No'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-center space-x-2 whitespace-nowrap">
+                        <button onclick="editProject('${project.id}')" class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Editar Proyecto">
+                            <i data-lucide="edit"></i>
+                        </button>
+                        <button onclick="deleteProject('${project.id}')" class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Proyecto">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Reinicializar iconos de Lucide
+            lucide.createIcons();
+        }
+
+        // Filtrar proyectos
+        function filterProjects(searchTerm) {
+            if (!searchTerm) {
+                renderProjects();
+                return;
+            }
+
+            const filtered = projects.filter(project => 
+                (project.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (project.developer || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (project.zone_name || '').toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            renderProjects(filtered);
+        }
+
+        // Abrir modal para crear proyecto
+        function openCreateModal() {
+            editingProjectId = null;
+            modalTitle.textContent = 'Nuevo Proyecto';
+            projectForm.reset();
+            projectModal.classList.add('active');
+        }
+
+        // Abrir modal para editar proyecto
+        function editProject(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+
+            editingProjectId = projectId;
+            modalTitle.textContent = 'Editar Proyecto';
+            
+            document.getElementById('project-name').value = project.name || '';
+            document.getElementById('project-developer').value = project.developer || '';
+            document.getElementById('project-units').value = project.total_units || '';
+            document.getElementById('project-crypto').checked = project.accepts_crypto || false;
+            
+            projectModal.classList.add('active');
+        }
+
+        // Cerrar modal
+        function closeProjectModal() {
+            projectModal.classList.remove('active');
+            editingProjectId = null;
+            projectForm.reset();
+        }
+
+        // Crear o actualizar proyecto
+        async function saveProject(formData) {
+            try {
+                if (editingProjectId) {
+                    // Actualizar proyecto existente
+                    await apiRequest(`/projects/${editingProjectId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    // Crear nuevo proyecto
+                    await apiRequest('/projects', {
+                        method: 'POST',
+                        body: JSON.stringify(formData)
+                    });
+                }
+
+                await loadProjects();
+                closeProjectModal();
+                showSuccess(editingProjectId ? 'Proyecto actualizado correctamente' : 'Proyecto creado correctamente');
+            } catch (error) {
+                console.error('Error saving project:', error);
+                showError('Error al guardar el proyecto');
+            }
+        }
+
+        // Eliminar proyecto
+        async function deleteProject(projectId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este proyecto?')) {
+                return;
+            }
+
+            try {
+                await apiRequest(`/projects/${projectId}`, {
+                    method: 'DELETE'
+                });
+
+                await loadProjects();
+                showSuccess('Proyecto eliminado correctamente');
+            } catch (error) {
+                console.error('Error deleting project:', error);
+                showError('Error al eliminar el proyecto');
+            }
+        }
+
+        // Mostrar mensajes de éxito/error
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ${
+                type === 'success' ? 'bg-green-600' : 
+                type === 'error' ? 'bg-red-600' : 'bg-blue-600'
+            }`;
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+
+            setTimeout(() => {
+                document.body.removeChild(messageDiv);
+            }, 3000);
+        }
+
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        // Event Listeners
         menuButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evita que el click se propague al documento
-            toggleSidebar();
+            e.stopPropagation();
+            sidebar.classList.toggle('-translate-x-full');
         });
 
-        // Evento para cerrar el sidebar si se hace click fuera de él
         document.addEventListener('click', (e) => {
-            // Si el sidebar está visible y el click fue fuera del sidebar y del botón del menú
             if (!sidebar.classList.contains('-translate-x-full') && !sidebar.contains(e.target) && !menuButton.contains(e.target)) {
-                toggleSidebar();
+                sidebar.classList.add('-translate-x-full');
             }
         });
 
-        // Inicializar Lucide Icons
-        lucide.createIcons();
+        searchInput.addEventListener('input', (e) => {
+            filterProjects(e.target.value);
+        });
+
+        addProjectBtn.addEventListener('click', openCreateModal);
+        closeModal.addEventListener('click', closeProjectModal);
+        cancelBtn.addEventListener('click', closeProjectModal);
+
+        projectForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('project-name').value,
+                developer: document.getElementById('project-developer').value,
+                total_units: parseInt(document.getElementById('project-units').value) || 0,
+                accepts_crypto: document.getElementById('project-crypto').checked
+            };
+
+            saveProject(formData);
+        });
+
+        // Cerrar modal al hacer click fuera
+        projectModal.addEventListener('click', (e) => {
+            if (e.target === projectModal) {
+                closeProjectModal();
+            }
+        });
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            loadProjects();
+        });
+
+        // Hacer funciones globales para los botones
+        window.editProject = editProject;
+        window.deleteProject = deleteProject;
     </script>
 </body>
 </html>
