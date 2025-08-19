@@ -2,7 +2,7 @@ import uuid
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import List, Optional
-from . import schemas
+import schemas # <-- CORRECCIÓN: Se cambió de 'from . import schemas' a una importación directa.
 
 # --- CRUD para Zonas ---
 def get_zone(conn, zone_id: uuid.UUID):
@@ -26,7 +26,7 @@ def create_zone(conn, zone: schemas.ZoneCreate):
         conn.commit()
         return new_zone
 
-# --- CRUD para Proyectos (CORREGIDO Y COMPLETO) ---
+# --- CRUD para Proyectos ---
 def get_project(conn, project_id: uuid.UUID):
     """Obtiene un único proyecto por su ID, incluyendo el nombre de la zona."""
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
