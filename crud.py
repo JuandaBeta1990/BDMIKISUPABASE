@@ -179,6 +179,17 @@ def get_unit(conn, unit_id: uuid.UUID):
         cur.execute("SELECT * FROM units WHERE id = %s", (str(unit_id),))
         return cur.fetchone()
 
+def get_all_units(conn, skip: int = 0, limit: int = 1000):
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("""
+            SELECT u.*, p.name as project_name 
+            FROM units u 
+            LEFT JOIN projects p ON u.project_id = p.id 
+            ORDER BY p.name, u.unit_identifier 
+            LIMIT %s OFFSET %s
+        """, (limit, skip))
+        return cur.fetchall()
+
 def get_units_by_project(conn, project_id: uuid.UUID):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("SELECT * FROM units WHERE project_id = %s ORDER BY unit_identifier", (str(project_id),))

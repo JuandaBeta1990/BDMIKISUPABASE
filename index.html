@@ -262,7 +262,7 @@
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
                         </div>
 
-                        <!-- Tabla de Datos Responsiva -->
+                        <!--Tabla de Datos Responsiva -->
                         <div id="projects-table" class="overflow-x-auto" style="display: none;">
                             <table class="w-full text-sm text-left min-w-[800px]">
                                 <thead class="border-b border-white/20">
@@ -288,11 +288,99 @@
                         </div>
                     </div>
                 </div>
-                 <!-- Placeholder for other sections -->
-                 <div id="units-content" class="content-section">
-                    <h1 class="text-3xl font-bold text-white mb-8">Unidades</h1>
-                    <p class="text-gray-400">Contenido de Unidades...</p>
-                </div>
+
+                <!-- Units Section -->
+                    <div id="units-content" class="content-section">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-white">Gestión de Unidades</h2>
+                            <button id="new-unit-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>Nueva Unidad</span>
+                            </button>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="glass-effect rounded-xl p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-white mb-4">Filtros</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Proyecto</label>
+                                    <select id="filter-project" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Todos los proyectos</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Estado</label>
+                                    <select id="filter-status" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Todos los estados</option>
+                                        <option value="Disponible">Disponible</option>
+                                        <option value="Reservada">Reservada</option>
+                                        <option value="Vendida">Vendida</option>
+                                        <option value="En construcción">En construcción</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Tipología</label>
+                                    <select id="filter-typology" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Todas las tipologías</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Buscar</label>
+                                    <input type="text" id="filter-search" placeholder="Buscar por identificador..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            <div class="flex justify-end mt-4 space-x-3">
+                                <button id="clear-filters-btn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                    Limpiar Filtros
+                                </button>
+                                <button id="apply-filters-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                    Aplicar Filtros
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Units Table -->
+                        <div class="glass-effect rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-white">Lista de Unidades</h3>
+                                <div class="text-sm text-gray-300">
+                                    <span id="units-count">0</span> unidades encontradas
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-gray-700">
+                                            <th class="pb-3 text-gray-300 font-medium">Proyecto</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Identificador</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Tipología</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Nivel</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Área (m²)</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Estado</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Entrega</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="units-table-body" class="text-gray-300">
+                                        <!-- Units will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div id="units-loading" class="flex justify-center items-center py-8 hidden">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                                <span class="ml-2 text-gray-300">Cargando unidades...</span>
+                            </div>
+
+                            <div id="no-units" class="text-center py-8 text-gray-400 hidden">
+                                <i data-lucide="home" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+                                <p>No se encontraron unidades</p>
+                            </div>
+                        </div>
+                    </div>
+
                  <div id="users-content" class="content-section">
                     <h1 class="text-3xl font-bold text-white mb-8">Usuarios</h1>
                     <p class="text-gray-400">Contenido de Usuarios...</p>
@@ -486,6 +574,10 @@
                     headerTitle.textContent = 'Gestión de Proyectos';
                     headerSubtitle.textContent = 'Aquí puedes ver, editar y crear nuevos proyectos.';
                     break;
+                case 'units':
+                    headerTitle.textContent = 'Gestión de Unidades';
+                    headerSubtitle.textContent = 'Administra todas las unidades de tus proyectos.';
+                    break;
                 // Add other section titles as needed
             }
 
@@ -498,7 +590,7 @@
                     loadProjects();
                     break;
                 case 'units':
-                    // TODO: Implementar carga de unidades
+                    loadUnits();
                     break;
                 case 'users':
                     // TODO: Implementar carga de usuarios
@@ -576,7 +668,7 @@
                 if (project.turn_key) features.push('Llave en Mano');
                 if (project.has_ocean_view) features.push('Vista al Mar');
                 if (project.condo_regime) features.push('Condo');
-                
+
                 return `
                 <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
                     <td class="px-4 py-4 font-medium text-white">
@@ -787,13 +879,221 @@
             filterProjects(e.target.value);
         }
 
+        // Load Projects
+        async function loadProjects() {
+            loading.style.display = 'flex';
+            projectsTable.style.display = 'none';
+            noProjects.style.display = 'none';
+
+            try {
+                projects = await apiRequest('/projects');
+                renderProjects();
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                showError('Error al cargar los proyectos');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Load Units
+        let allUnits = [];
+        let allProjects = [];
+
+        async function loadUnits() {
+            document.getElementById('units-loading').classList.remove('hidden');
+            document.getElementById('no-units').classList.add('hidden');
+
+            try {
+                // Cargar proyectos para los filtros
+                const projectsResponse = await apiRequest('/projects');
+                allProjects = await projectsResponse.json();
+                populateProjectFilter();
+
+                // Cargar todas las unidades
+                const unitsPromises = allProjects.map(async (project) => {
+                    try {
+                        const response = await apiRequest(`/units/project/${project.id}`);
+                        const units = await response.json();
+                        return units.map(unit => ({
+                            ...unit,
+                            project_name: project.name
+                        }));
+                    } catch (error) {
+                        console.error(`Error loading units for project ${project.name}:`, error);
+                        return [];
+                    }
+                });
+
+                const unitsArrays = await Promise.all(unitsPromises);
+                allUnits = unitsArrays.flat();
+
+                populateFilters();
+                displayUnits(allUnits);
+
+            } catch (error) {
+                console.error('Error loading units:', error);
+                document.getElementById('units-table-body').innerHTML = 
+                    '<tr><td colspan="8" class="text-center py-4 text-red-400">Error cargando unidades</td></tr>';
+            } finally {
+                document.getElementById('units-loading').classList.add('hidden');
+            }
+        }
+
+        function populateProjectFilter() {
+            const select = document.getElementById('filter-project');
+            select.innerHTML = '<option value="">Todos los proyectos</option>';
+
+            allProjects.forEach(project => {
+                const option = document.createElement('option');
+                option.value = project.id;
+                option.textContent = project.name;
+                select.appendChild(option);
+            });
+        }
+
+        function populateFilters() {
+            // Populate typologies filter
+            const typologies = [...new Set(allUnits.map(unit => unit.typology).filter(t => t))];
+            const typologySelect = document.getElementById('filter-typology');
+            typologySelect.innerHTML = '<option value="">Todas las tipologías</option>';
+
+            typologies.forEach(typology => {
+                const option = document.createElement('option');
+                option.value = typology;
+                option.textContent = typology;
+                typologySelect.appendChild(option);
+            });
+        }
+
+        function displayUnits(units) {
+            const tbody = document.getElementById('units-table-body');
+            const countElement = document.getElementById('units-count');
+
+            countElement.textContent = units.length;
+
+            if (units.length === 0) {
+                document.getElementById('no-units').classList.remove('hidden');
+                tbody.innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = units.map(unit => `
+                <tr class="border-b border-gray-700/50 hover:bg-white/5">
+                    <td class="py-3 text-gray-300">${unit.project_name || 'Sin proyecto'}</td>
+                    <td class="py-3 text-white font-medium">${unit.unit_identifier}</td>
+                    <td class="py-3 text-gray-300">${unit.typology || 'N/A'}</td>
+                    <td class="py-3 text-gray-300">${unit.level || 'N/A'}</td>
+                    <td class="py-3 text-gray-300">${unit.total_area_sqm ? unit.total_area_sqm.toFixed(2) : 'N/A'}</td>
+                    <td class="py-3">
+                        <span class="px-2 py-1 rounded text-xs font-medium ${getStatusColor(unit.status)}">
+                            ${unit.status || 'Sin estado'}
+                        </span>
+                    </td>
+                    <td class="py-3 text-gray-300">${unit.delivery_date || 'N/A'}</td>
+                    <td class="py-3">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="viewUnit('${unit.id}')" class="text-blue-400 hover:text-blue-300 p-1">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="editUnit('${unit.id}')" class="text-yellow-400 hover:text-yellow-300 p-1">
+                                <i data-lucide="edit" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteUnit('${unit.id}', '${unit.unit_identifier}')" class="text-red-400 hover:text-red-300 p-1">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Re-initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function getStatusColor(status) {
+            switch (status?.toLowerCase()) {
+                case 'disponible':
+                    return 'bg-green-500/20 text-green-400';
+                case 'reservada':
+                    return 'bg-yellow-500/20 text-yellow-400';
+                case 'vendida':
+                    return 'bg-red-500/20 text-red-400';
+                case 'en construcción':
+                    return 'bg-blue-500/20 text-blue-400';
+                default:
+                    return 'bg-gray-500/20 text-gray-400';
+            }
+        }
+
+        function applyUnitsFilters() {
+            const projectFilter = document.getElementById('filter-project').value;
+            const statusFilter = document.getElementById('filter-status').value;
+            const typologyFilter = document.getElementById('filter-typology').value;
+            const searchFilter = document.getElementById('filter-search').value.toLowerCase();
+
+            const filteredUnits = allUnits.filter(unit => {
+                const matchesProject = !projectFilter || unit.project_id === projectFilter;
+                const matchesStatus = !statusFilter || unit.status === statusFilter;
+                const matchesTypology = !typologyFilter || unit.typology === typologyFilter;
+                const matchesSearch = !searchFilter || unit.unit_identifier.toLowerCase().includes(searchFilter);
+
+                return matchesProject && matchesStatus && matchesTypology && matchesSearch;
+            });
+
+            displayUnits(filteredUnits);
+        }
+
+        function clearUnitsFilters() {
+            document.getElementById('filter-project').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-typology').value = '';
+            document.getElementById('filter-search').value = '';
+            displayUnits(allUnits);
+        }
+
+        // Unit management functions
+        function viewUnit(unitId) {
+            // TODO: Implement unit view
+            alert(`Ver unidad: ${unitId}`);
+        }
+
+        function editUnit(unitId) {
+            // TODO: Implement unit edit
+            alert(`Editar unidad: ${unitId}`);
+        }
+
+        async function deleteUnit(unitId, unitIdentifier) {
+            if (confirm(`¿Estás seguro de que quieres eliminar la unidad "${unitIdentifier}"?`)) {
+                try {
+                    const response = await apiRequest(`/units/${unitId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        allUnits = allUnits.filter(unit => unit.id !== unitId);
+                        applyUnitsFilters(); // Refresh the filtered view
+                        alert('Unidad eliminada correctamente');
+                    } else {
+                        alert('Error al eliminar la unidad');
+                    }
+                } catch (error) {
+                    console.error('Error deleting unit:', error);
+                    alert('Error al eliminar la unidad');
+                }
+            }
+        }
+
+
         // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
             // Inicializar Lucide Icons
             lucide.createIcons();
 
-            // Agregar event listeners para navegación
-            document.querySelectorAll('aside nav a').forEach(link => {
+            // Add event listeners for section switching
+            document.querySelectorAll('[data-section]').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const section = this.getAttribute('data-section');
@@ -814,19 +1114,29 @@
             searchInput.addEventListener('input', handleSearch);
             menuButton.addEventListener('click', toggleSidebar);
 
-            // Cerrar modal al hacer click fuera
+            // Close modal when clicking outside
             projectModal.addEventListener('click', function(e) {
                 if (e.target === projectModal) {
                     closeProjectModal();
                 }
             });
 
-             // Cerrar sidebar si se hace click fuera de él
+             // Close sidebar if click outside
              document.addEventListener('click', function(e) {
                 if (!sidebar.classList.contains('-translate-x-full') && !sidebar.contains(e.target) && !menuButton.contains(e.target)) {
                     sidebar.classList.add('-translate-x-full');
                 }
             });
+
+            // Units filters event listeners
+            document.getElementById('apply-filters-btn').addEventListener('click', applyUnitsFilters);
+            document.getElementById('clear-filters-btn').addEventListener('click', clearUnitsFilters);
+
+            // Real-time search filter
+            document.getElementById('filter-search').addEventListener('input', applyUnitsFilters);
+            document.getElementById('filter-project').addEventListener('change', applyUnitsFilters);
+            document.getElementById('filter-status').addEventListener('change', applyUnitsFilters);
+            document.getElementById('filter-typology').addEventListener('change', applyUnitsFilters);
         });
 
         // Ver detalles del proyecto
@@ -873,14 +1183,14 @@
                     <div class="text-gray-300">${content}</div>
                 </div>
             `;
-            
+
             // Close modal when clicking outside
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) {
                     modal.remove();
                 }
             });
-            
+
             document.body.appendChild(modal);
             lucide.createIcons(); // Re-initialize icons
         }

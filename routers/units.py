@@ -15,6 +15,10 @@ router = APIRouter(
 def create_unit_endpoint(unit: schemas.UnitCreate, conn = Depends(get_db)):
     return crud.create_unit(conn=conn, unit=unit)
 
+@router.get("/", response_model=List[schemas.Unit])
+def read_all_units_endpoint(skip: int = 0, limit: int = 1000, conn = Depends(get_db)):
+    return crud.get_all_units(conn=conn, skip=skip, limit=limit)
+
 @router.get("/project/{project_id}", response_model=List[schemas.Unit])
 def read_units_by_project_endpoint(project_id: UUID, conn = Depends(get_db)):
     return crud.get_units_by_project(conn=conn, project_id=project_id)
