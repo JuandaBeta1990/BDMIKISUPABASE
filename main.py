@@ -25,4 +25,4 @@ def read_root():
     return FileResponse('index.html')
 
 # Servir archivos estáticos si es necesario
-from fastapi.staticfiles import StaticFilesl')
+from fastapi.staticfiles import StaticFiles
