@@ -1,4 +1,4 @@
-# database.py
+
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -34,6 +34,10 @@ def get_db():
     try:
         conn = get_db_connection()
         yield conn
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        raise e
     finally:
         if conn:
             conn.close()
