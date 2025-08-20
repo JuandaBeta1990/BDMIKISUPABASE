@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
-from routers import projects, zones
+from routers import projects, zones, users
 from routers import dashboard
 from routers import units
 import uvicorn
@@ -18,6 +18,7 @@ app.include_router(projects.router, prefix="/api")
 app.include_router(zones.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(units.router, prefix="/api")
+app.include_router(users.router, prefix="/api")
 
 # Servir el Frontend
 @app.get("/")

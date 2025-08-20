@@ -19,10 +19,15 @@ class ZoneBase(BaseModel):
 class ZoneCreate(ZoneBase):
     pass
 
+class ZoneUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+
 class Zone(ZoneBase, BaseSchema):
     id: UUID
     created_at: datetime
     updated_at: datetime
+    project_count: Optional[int] = 0
 
 # --- Project Schemas ---
 class ProjectBase(BaseModel):
@@ -151,9 +156,14 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
-class User(UserBase,
-           BaseSchema):
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    role: Optional[str] = None
+
+class User(UserBase, BaseSchema):
     id: UUID
+    created_at: datetime
+    updated_at: datetime
 
 # --- Strategic Context Schemas ---
 class StrategicContextBase(BaseModel):

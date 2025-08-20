@@ -24,3 +24,17 @@ def read_zone_endpoint(zone_id: UUID, conn = Depends(get_db)):
     if db_zone is None:
         raise HTTPException(status_code=404, detail="Zone not found")
     return db_zone
+
+@router.put("/{zone_id}", response_model=schemas.Zone)
+def update_zone_endpoint(zone_id: UUID, zone: schemas.ZoneUpdate, conn = Depends(get_db)):
+    db_zone = crud.update_zone(conn=conn, zone_id=zone_id, zone=zone)
+    if db_zone is None:
+        raise HTTPException(status_code=404, detail="Zone not found")
+    return db_zone
+
+@router.delete("/{zone_id}")
+def delete_zone_endpoint(zone_id: UUID, conn = Depends(get_db)):
+    result = crud.delete_zone(conn=conn, zone_id=zone_id)
+    if result == 0:
+        raise HTTPException(status_code=404, detail="Zone not found")
+    return {"message": "Zone deleted successfully"}

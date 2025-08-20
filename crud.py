@@ -15,9 +15,32 @@ def get_zones(conn, skip: int = 0, limit: int = 100):
         cur.execute("""
             SELECT z.*, COUNT(p.id) AS project_count
             FROM zones z LEFT JOIN projects p ON z.id = p.zone
-            GROUP BY z.id ORDER BY z.name LIMIT %s OFFSET %s
+            GROUP BY z.id, z.name, z.description, z.created_at, z.updated_at 
+            ORDER BY z.created_at DESC LIMIT %s OFFSET %s
         """, (limit, skip))
         return cur.fetchall()
+
+def update_zone(conn, zone_id: uuid.UUID, zone: schemas.ZoneUpdate):
+    update_data = zone.model_dump(exclude_unset=True)
+    if not update_data:
+        return get_zone(conn, zone_id)
+
+    set_clause = ", ".join([f"{key} = %s" for key in update_data.keys()])
+    values = list(update_data.values())
+    values.append(str(zone_id))
+
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        query = f"UPDATE zones SET {set_clause}, updated_at = NOW() WHERE id = %s"
+        cur.execute(query, tuple(values))
+        conn.commit()
+    return get_zone(conn, zone_id)
+
+def delete_zone(conn, zone_id: uuid.UUID):
+    with conn.cursor() as cur:
+        cur.execute("DELETE FROM zones WHERE id = %s", (str(zone_id),))
+        rowcount = cur.rowcount
+        conn.commit()
+        return rowcount
 
 def create_zone(conn, zone: schemas.ZoneCreate):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -172,6 +195,60 @@ def get_units_by_status(conn):
             ORDER BY unit_count DESC
         """)
         return cur.fetchall()
+
+# --- CRUD para Usuarios ---
+def get_user(conn, user_id: uuid.UUID):
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("SELECT * FROM users WHERE id = %s", (str(user_id),))
+        return cur.fetchone()
+
+def get_users(conn, skip: int = 0, limit: int = 100, role_filter: str = ""):
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        query = "SELECT * FROM users"
+        params = []
+        
+        if role_filter:
+            query += " WHERE role = %s"
+            params.append(role_filter)
+            
+        query += " ORDER BY created_at DESC LIMIT %s OFFSET %s"
+        params.extend([limit, skip])
+        
+        cur.execute(query, tuple(params))
+        return cur.fetchall()
+
+def create_user(conn, user: schemas.UserCreate):
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        # En un sistema real, aquí hashearías la contraseña
+        cur.execute(
+            "INSERT INTO users (username, role, password_hash) VALUES (%s, %s, %s) RETURNING *",
+            (user.username, user.role, user.password)  # Nota: En producción, hashear la contraseña
+        )
+        new_user = cur.fetchone()
+        conn.commit()
+        return new_user
+
+def update_user(conn, user_id: uuid.UUID, user: schemas.UserUpdate):
+    update_data = user.model_dump(exclude_unset=True)
+    if not update_data:
+        return get_user(conn, user_id)
+
+    set_clause = ", ".join([f"{key} = %s" for key in update_data.keys()])
+    values = list(update_data.values())
+    values.append(str(user_id))
+
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        query = f"UPDATE users SET {set_clause}, updated_at = NOW() WHERE id = %s"
+        cur.execute(query, tuple(values))
+        conn.commit()
+    return get_user(conn, user_id)
+
+def delete_user(conn, user_id: uuid.UUID):
+    with conn.cursor() as cur:
+        cur.execute("DELETE FROM users WHERE id = %s", (str(user_id),))
+        rowcount = cur.rowcount
+        conn.commit()
+        return rowcount
 
 # --- CRUD para Unidades ---
 def get_unit(conn, unit_id: uuid.UUID):

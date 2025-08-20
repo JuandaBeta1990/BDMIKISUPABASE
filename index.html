@@ -382,12 +382,108 @@
                     </div>
 
                  <div id="users-content" class="content-section">
-                    <h1 class="text-3xl font-bold text-white mb-8">Usuarios</h1>
-                    <p class="text-gray-400">Contenido de Usuarios...</p>
+                    <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                            <h3 class="text-xl font-semibold text-white">Gestión de Usuarios</h3>
+                            <button id="add-user-btn" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-blue-600/20 w-full sm:w-auto">
+                                <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+                                Añadir Usuario
+                            </button>
+                        </div>
+
+                        <!-- Filtros de usuarios -->
+                        <div class="glass-effect rounded-xl p-4 mb-6 bg-white/5">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Filtrar por rol</label>
+                                    <select id="user-role-filter" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Todos los roles</option>
+                                        <option value="admin">Administrador</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="user">Usuario</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Buscar usuario</label>
+                                    <input type="text" id="user-search" placeholder="Buscar por nombre..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="flex items-end">
+                                    <button id="clear-user-filters" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors w-full">
+                                        Limpiar Filtros
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="users-loading" class="flex justify-center items-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        </div>
+
+                        <!-- Tabla de Usuarios -->
+                        <div id="users-table" class="overflow-x-auto" style="display: none;">
+                            <table class="w-full text-sm text-left">
+                                <thead class="border-b border-white/20">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 font-medium">Usuario</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Rol</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Estado</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Creado</th>
+                                        <th scope="col" class="px-4 py-3 font-medium text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-tbody">
+                                    <!-- Los usuarios se cargarán dinámicamente aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mensaje cuando no hay usuarios -->
+                        <div id="no-users" class="text-center py-8 text-gray-400" style="display: none;">
+                            <i data-lucide="users" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                            <p>No hay usuarios disponibles</p>
+                        </div>
+                    </div>
                 </div>
                  <div id="zones-content" class="content-section">
-                    <h1 class="text-3xl font-bold text-white mb-8">Zonas</h1>
-                    <p class="text-gray-400">Contenido de Zonas...</p>
+                    <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                            <h3 class="text-xl font-semibold text-white">Gestión de Zonas</h3>
+                            <button id="add-zone-btn" class="flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-purple-600/20 w-full sm:w-auto">
+                                <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+                                Añadir Zona
+                            </button>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="zones-loading" class="flex justify-center items-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        </div>
+
+                        <!-- Tabla de Zonas -->
+                        <div id="zones-table" class="overflow-x-auto" style="display: none;">
+                            <table class="w-full text-sm text-left">
+                                <thead class="border-b border-white/20">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 font-medium">Nombre de la Zona</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Descripción</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Proyectos</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Creada</th>
+                                        <th scope="col" class="px-4 py-3 font-medium text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zones-tbody">
+                                    <!-- Las zonas se cargarán dinámicamente aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mensaje cuando no hay zonas -->
+                        <div id="no-zones" class="text-center py-8 text-gray-400" style="display: none;">
+                            <i data-lucide="map-pin" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                            <p>No hay zonas disponibles</p>
+                        </div>
+                    </div>
                 </div>
                  <div id="config-content" class="content-section">
                     <h1 class="text-3xl font-bold text-white mb-8">Configuración</h1>
@@ -395,6 +491,79 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Modal para Crear/Editar Zona -->
+    <div id="zone-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
+        <div class="glass-effect rounded-2xl p-6 m-4 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="zone-modal-title" class="text-xl font-semibold text-white">Nueva Zona</h3>
+                <button id="close-zone-modal" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="zone-form">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de la Zona *</label>
+                        <input type="text" id="zone-name" name="name" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" placeholder="Ej: Tulum, Playa del Carmen">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Descripción</label>
+                        <textarea id="zone-description" name="description" rows="3" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" placeholder="Descripción de la zona geográfica"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" id="cancel-zone-btn" class="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Crear/Editar Usuario -->
+    <div id="user-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
+        <div class="glass-effect rounded-2xl p-6 m-4 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="user-modal-title" class="text-xl font-semibold text-white">Nuevo Usuario</h3>
+                <button id="close-user-modal" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="user-form">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de Usuario *</label>
+                        <input type="text" id="user-username" name="username" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" placeholder="Nombre de usuario">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Rol *</label>
+                        <select id="user-role" name="role" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white">
+                            <option value="">Seleccionar rol</option>
+                            <option value="admin">Administrador</option>
+                            <option value="manager">Manager</option>
+                            <option value="user">Usuario</option>
+                        </select>
+                    </div>
+                    <div id="password-field">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Contraseña *</label>
+                        <input type="password" id="user-password" name="password" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" placeholder="Contraseña">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" id="cancel-user-btn" class="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Modal para Crear/Editar Proyecto -->
@@ -578,7 +747,18 @@
                     headerTitle.textContent = 'Gestión de Unidades';
                     headerSubtitle.textContent = 'Administra todas las unidades de tus proyectos.';
                     break;
-                // Add other section titles as needed
+                case 'users':
+                    headerTitle.textContent = 'Gestión de Usuarios';
+                    headerSubtitle.textContent = 'Administra los usuarios del sistema y sus roles.';
+                    break;
+                case 'zones':
+                    headerTitle.textContent = 'Gestión de Zonas';
+                    headerSubtitle.textContent = 'Gestiona las zonas geográficas del sistema.';
+                    break;
+                case 'config':
+                    headerTitle.textContent = 'Configuración';
+                    headerSubtitle.textContent = 'Configuraciones generales del sistema.';
+                    break;
             }
 
             // Cargar datos específicos de la sección
@@ -593,10 +773,10 @@
                     loadUnits();
                     break;
                 case 'users':
-                    // TODO: Implementar carga de usuarios
+                    loadUsers();
                     break;
                 case 'zones':
-                    // TODO: Implementar carga de zonas
+                    loadZones();
                     break;
                 case 'config':
                     // TODO: Implementar configuración
@@ -1195,10 +1375,394 @@
             lucide.createIcons(); // Re-initialize icons
         }
 
+        // Variables para zonas y usuarios
+        let zones = [];
+        let users = [];
+        let editingZoneId = null;
+        let editingUserId = null;
+
+        // Elementos del DOM para zonas
+        const zonesLoading = document.getElementById('zones-loading');
+        const zonesTable = document.getElementById('zones-table');
+        const zonesTbody = document.getElementById('zones-tbody');
+        const noZones = document.getElementById('no-zones');
+        const addZoneBtn = document.getElementById('add-zone-btn');
+        const zoneModal = document.getElementById('zone-modal');
+        const zoneModalTitle = document.getElementById('zone-modal-title');
+        const zoneForm = document.getElementById('zone-form');
+        const closeZoneModal = document.getElementById('close-zone-modal');
+        const cancelZoneBtn = document.getElementById('cancel-zone-btn');
+
+        // Elementos del DOM para usuarios
+        const usersLoading = document.getElementById('users-loading');
+        const usersTable = document.getElementById('users-table');
+        const usersTbody = document.getElementById('users-tbody');
+        const noUsers = document.getElementById('no-users');
+        const addUserBtn = document.getElementById('add-user-btn');
+        const userModal = document.getElementById('user-modal');
+        const userModalTitle = document.getElementById('user-modal-title');
+        const userForm = document.getElementById('user-form');
+        const closeUserModal = document.getElementById('close-user-modal');
+        const cancelUserBtn = document.getElementById('cancel-user-btn');
+        const userRoleFilter = document.getElementById('user-role-filter');
+        const userSearch = document.getElementById('user-search');
+        const clearUserFilters = document.getElementById('clear-user-filters');
+
+        // Funciones para Zonas
+        async function loadZones() {
+            zonesLoading.style.display = 'flex';
+            zonesTable.style.display = 'none';
+            noZones.style.display = 'none';
+
+            try {
+                zones = await apiRequest('/zones');
+                renderZones();
+            } catch (error) {
+                console.error('Error loading zones:', error);
+                showError('Error al cargar las zonas');
+            } finally {
+                zonesLoading.style.display = 'none';
+            }
+        }
+
+        function renderZones() {
+            if (zones.length === 0) {
+                zonesTable.style.display = 'none';
+                noZones.style.display = 'block';
+                return;
+            }
+
+            zonesTable.style.display = 'block';
+            noZones.style.display = 'none';
+
+            zonesTbody.innerHTML = zones.map(zone => `
+                <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+                    <td class="px-4 py-4 font-medium text-white">${zone.name}</td>
+                    <td class="px-4 py-4 text-gray-300">${zone.description || 'Sin descripción'}</td>
+                    <td class="px-4 py-4 text-center">
+                        <span class="px-2 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs font-medium">
+                            ${zone.project_count || 0}
+                        </span>
+                    </td>
+                    <td class="px-4 py-4 text-gray-400">${new Date(zone.created_at).toLocaleDateString()}</td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="flex items-center justify-center space-x-1">
+                            <button onclick="editZone('${zone.id}')" class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Editar Zona">
+                                <i data-lucide="edit"></i>
+                            </button>
+                            <button onclick="deleteZone('${zone.id}', '${zone.name}')" class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Zona">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function openAddZoneModal() {
+            editingZoneId = null;
+            zoneModalTitle.textContent = 'Nueva Zona';
+            zoneForm.reset();
+            document.getElementById('zone-name').focus();
+            zoneModal.classList.add('active');
+        }
+
+        function editZone(zoneId) {
+            const zone = zones.find(z => z.id === zoneId);
+            if (!zone) return;
+
+            editingZoneId = zoneId;
+            zoneModalTitle.textContent = 'Editar Zona';
+            document.getElementById('zone-name').value = zone.name || '';
+            document.getElementById('zone-description').value = zone.description || '';
+            document.getElementById('zone-name').focus();
+            zoneModal.classList.add('active');
+        }
+
+        function closeZoneModalHandler() {
+            zoneModal.classList.remove('active');
+            editingZoneId = null;
+            zoneForm.reset();
+        }
+
+        async function saveZone(formData) {
+            try {
+                if (editingZoneId) {
+                    await apiRequest(`/zones/${editingZoneId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(formData)
+                    });
+                    showSuccess('Zona actualizada correctamente');
+                } else {
+                    await apiRequest('/zones', {
+                        method: 'POST',
+                        body: JSON.stringify(formData)
+                    });
+                    showSuccess('Zona creada correctamente');
+                }
+                await loadZones();
+                closeZoneModalHandler();
+            } catch (error) {
+                console.error('Error saving zone:', error);
+                showError('Error al guardar la zona');
+            }
+        }
+
+        async function deleteZone(zoneId, zoneName) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar la zona "${zoneName}"?`)) {
+                return;
+            }
+
+            try {
+                await apiRequest(`/zones/${zoneId}`, {
+                    method: 'DELETE'
+                });
+                await loadZones();
+                showSuccess('Zona eliminada correctamente');
+            } catch (error) {
+                console.error('Error deleting zone:', error);
+                showError('Error al eliminar la zona');
+            }
+        }
+
+        // Funciones para Usuarios
+        async function loadUsers() {
+            usersLoading.style.display = 'flex';
+            usersTable.style.display = 'none';
+            noUsers.style.display = 'none';
+
+            try {
+                const roleFilter = userRoleFilter.value;
+                users = await apiRequest(`/users${roleFilter ? `?role=${roleFilter}` : ''}`);
+                renderUsers();
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showError('Error al cargar los usuarios');
+            } finally {
+                usersLoading.style.display = 'none';
+            }
+        }
+
+        function renderUsers(filteredUsers = null) {
+            const usersToRender = filteredUsers || users;
+
+            if (usersToRender.length === 0) {
+                usersTable.style.display = 'none';
+                noUsers.style.display = 'block';
+                return;
+            }
+
+            usersTable.style.display = 'block';
+            noUsers.style.display = 'none';
+
+            function getRoleColor(role) {
+                switch (role?.toLowerCase()) {
+                    case 'admin':
+                        return 'bg-red-500/20 text-red-300';
+                    case 'manager':
+                        return 'bg-blue-500/20 text-blue-300';
+                    case 'user':
+                        return 'bg-green-500/20 text-green-300';
+                    default:
+                        return 'bg-gray-500/20 text-gray-300';
+                }
+            }
+
+            usersTbody.innerHTML = usersToRender.map(user => `
+                <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+                    <td class="px-4 py-4 font-medium text-white">${user.username}</td>
+                    <td class="px-4 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}">
+                            ${user.role}
+                        </span>
+                    </td>
+                    <td class="px-4 py-4">
+                        <span class="px-2 py-1 bg-green-500/20 text-green-300 rounded-full text-xs font-medium">
+                            Activo
+                        </span>
+                    </td>
+                    <td class="px-4 py-4 text-gray-400">${new Date(user.created_at).toLocaleDateString()}</td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="flex items-center justify-center space-x-1">
+                            <button onclick="editUser('${user.id}')" class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Editar Usuario">
+                                <i data-lucide="edit"></i>
+                            </button>
+                            <button onclick="deleteUser('${user.id}', '${user.username}')" class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Usuario">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function filterUsers() {
+            const searchTerm = userSearch.value.toLowerCase();
+            const roleFilter = userRoleFilter.value;
+
+            const filtered = users.filter(user => {
+                const matchesSearch = !searchTerm || user.username.toLowerCase().includes(searchTerm);
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                return matchesSearch && matchesRole;
+            });
+
+            renderUsers(filtered);
+        }
+
+        function clearUserFiltersHandler() {
+            userRoleFilter.value = '';
+            userSearch.value = '';
+            renderUsers();
+        }
+
+        function openAddUserModal() {
+            editingUserId = null;
+            userModalTitle.textContent = 'Nuevo Usuario';
+            userForm.reset();
+            document.getElementById('password-field').style.display = 'block';
+            document.getElementById('user-password').required = true;
+            document.getElementById('user-username').focus();
+            userModal.classList.add('active');
+        }
+
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            editingUserId = userId;
+            userModalTitle.textContent = 'Editar Usuario';
+            document.getElementById('user-username').value = user.username || '';
+            document.getElementById('user-role').value = user.role || '';
+            document.getElementById('password-field').style.display = 'none';
+            document.getElementById('user-password').required = false;
+            document.getElementById('user-username').focus();
+            userModal.classList.add('active');
+        }
+
+        function closeUserModalHandler() {
+            userModal.classList.remove('active');
+            editingUserId = null;
+            userForm.reset();
+        }
+
+        async function saveUser(formData) {
+            try {
+                if (editingUserId) {
+                    delete formData.password; // No enviar contraseña en actualización
+                    await apiRequest(`/users/${editingUserId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(formData)
+                    });
+                    showSuccess('Usuario actualizado correctamente');
+                } else {
+                    await apiRequest('/users', {
+                        method: 'POST',
+                        body: JSON.stringify(formData)
+                    });
+                    showSuccess('Usuario creado correctamente');
+                }
+                await loadUsers();
+                closeUserModalHandler();
+            } catch (error) {
+                console.error('Error saving user:', error);
+                showError('Error al guardar el usuario');
+            }
+        }
+
+        async function deleteUser(userId, username) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar el usuario "${username}"?`)) {
+                return;
+            }
+
+            try {
+                await apiRequest(`/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                await loadUsers();
+                showSuccess('Usuario eliminado correctamente');
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showError('Error al eliminar el usuario');
+            }
+        }
+
+        // Event Listeners para Zonas
+        if (addZoneBtn) addZoneBtn.addEventListener('click', openAddZoneModal);
+        if (closeZoneModal) closeZoneModal.addEventListener('click', closeZoneModalHandler);
+        if (cancelZoneBtn) cancelZoneBtn.addEventListener('click', closeZoneModalHandler);
+        if (zoneForm) {
+            zoneForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = {
+                    name: document.getElementById('zone-name').value.trim(),
+                    description: document.getElementById('zone-description').value.trim() || null
+                };
+                if (!formData.name) {
+                    alert('El nombre de la zona es obligatorio.');
+                    return;
+                }
+                saveZone(formData);
+            });
+        }
+
+        // Event Listeners para Usuarios
+        if (addUserBtn) addUserBtn.addEventListener('click', openAddUserModal);
+        if (closeUserModal) closeUserModal.addEventListener('click', closeUserModalHandler);
+        if (cancelUserBtn) cancelUserBtn.addEventListener('click', closeUserModalHandler);
+        if (userRoleFilter) userRoleFilter.addEventListener('change', filterUsers);
+        if (userSearch) userSearch.addEventListener('input', filterUsers);
+        if (clearUserFilters) clearUserFilters.addEventListener('click', clearUserFiltersHandler);
+        if (userForm) {
+            userForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = {
+                    username: document.getElementById('user-username').value.trim(),
+                    role: document.getElementById('user-role').value
+                };
+                if (!editingUserId) {
+                    formData.password = document.getElementById('user-password').value;
+                }
+                if (!formData.username || !formData.role) {
+                    alert('El nombre de usuario y rol son obligatorios.');
+                    return;
+                }
+                if (!editingUserId && !formData.password) {
+                    alert('La contraseña es obligatoria para nuevos usuarios.');
+                    return;
+                }
+                saveUser(formData);
+            });
+        }
+
+        // Cerrar modales cuando se hace clic fuera
+        if (zoneModal) {
+            zoneModal.addEventListener('click', function(e) {
+                if (e.target === zoneModal) {
+                    closeZoneModalHandler();
+                }
+            });
+        }
+
+        if (userModal) {
+            userModal.addEventListener('click', function(e) {
+                if (e.target === userModal) {
+                    closeUserModalHandler();
+                }
+            });
+        }
+
         // Hacer funciones globales para los botones
         window.editProject = editProject;
         window.deleteProject = deleteProject;
         window.viewProject = viewProject;
+        window.editZone = editZone;
+        window.deleteZone = deleteZone;
+        window.editUser = editUser;
+        window.deleteUser = deleteUser;
     </script>
 </body>
 </html>
