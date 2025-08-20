@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
+import uuid
 from uuid import UUID
 import schemas
 import crud
@@ -34,3 +35,16 @@ def update_project_endpoint(project_id: UUID, project: schemas.ProjectUpdate, co
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     return crud.update_project(conn=conn, project_id=project_id, project=project)
+
+# --- ENDPOINT PARA ELIMINAR PROYECTO ---
+@router.delete("/{project_id}")
+def delete_project_endpoint(project_id: UUID, conn = Depends(get_db)):
+    db_project = crud.get_project(conn=conn, project_id=project_id)
+    if db_project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    deleted_count = crud.delete_project(conn=conn, project_id=project_id)
+    if deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    return {"message": "Project deleted successfully"}

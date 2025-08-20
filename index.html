@@ -264,15 +264,15 @@
 
                         <!-- Tabla de Datos Responsiva -->
                         <div id="projects-table" class="overflow-x-auto" style="display: none;">
-                            <table class="w-full text-sm text-left min-w-[640px]">
+                            <table class="w-full text-sm text-left min-w-[800px]">
                                 <thead class="border-b border-white/20">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 font-medium">Nombre del Proyecto</th>
-                                        <th scope="col" class="px-6 py-3 font-medium">Zona</th>
-                                        <th scope="col" class="px-6 py-3 font-medium">Desarrollador</th>
-                                        <th scope="col" class="px-6 py-3 font-medium">Unidades</th>
-                                        <th scope="col" class="px-6 py-3 font-medium">Crypto</th>
-                                        <th scope="col" class="px-6 py-3 font-medium text-center">Acciones</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Nombre del Proyecto</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Zona</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Desarrollador</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Unidades</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Features</th>
+                                        <th scope="col" class="px-4 py-3 font-medium text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="projects-tbody">
@@ -319,25 +319,64 @@
                 </button>
             </div>
             <form id="project-form">
-                <div class="space-y-4">
+                <div class="space-y-4 max-h-96 overflow-y-auto">
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Nombre del Proyecto *</label>
                         <input type="text" id="project-name" name="name" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Slug</label>
+                        <input type="text" id="project-slug" name="slug" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Desarrollador</label>
                         <input type="text" id="project-developer" name="developer" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
                     </div>
                     <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Sub Zona</label>
+                        <input type="text" id="project-subzone" name="sub_zone" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Total de Unidades</label>
                         <input type="number" id="project-units" name="total_units" min="0" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Acepta Crypto</label>
-                        <label class="flex items-center">
-                            <input type="checkbox" id="project-crypto" name="accepts_crypto" class="mr-2">
-                            <span class="text-gray-300">Sí, acepta criptomonedas</span>
-                        </label>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">URL de Google Maps</label>
+                        <input type="url" id="project-maps" name="maps_url" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Concepto</label>
+                        <textarea id="project-concept" name="concept" rows="3" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Resumen de Entrega</label>
+                        <input type="text" id="project-delivery" name="delivery_summary" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="project-crypto" name="accepts_crypto" class="mr-2">
+                                <span class="text-gray-300 text-sm">Acepta Crypto</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="project-turnkey" name="turn_key" class="mr-2">
+                                <span class="text-gray-300 text-sm">Llave en Mano</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="project-ocean" name="has_ocean_view" class="mr-2">
+                                <span class="text-gray-300 text-sm">Vista al Mar</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="project-condo" name="condo_regime" class="mr-2">
+                                <span class="text-gray-300 text-sm">Régimen Condo</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
@@ -531,27 +570,53 @@
             projectsTable.style.display = 'block';
             noProjects.style.display = 'none';
 
-            projectsTbody.innerHTML = projectsToRender.map(project => `
+            projectsTbody.innerHTML = projectsToRender.map(project => {
+                const features = [];
+                if (project.accepts_crypto) features.push('Crypto');
+                if (project.turn_key) features.push('Llave en Mano');
+                if (project.has_ocean_view) features.push('Vista al Mar');
+                if (project.condo_regime) features.push('Condo');
+                
+                return `
                 <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
-                    <td class="px-6 py-4 font-medium text-white whitespace-nowrap">${project.name || 'Sin nombre'}</td>
-                    <td class="px-6 py-4">${project.zone_name || 'Sin zona'}</td>
-                    <td class="px-6 py-4">${project.developer || 'Sin desarrollador'}</td>
-                    <td class="px-6 py-4">${project.total_units || 0}</td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 text-xs font-medium rounded-full ${project.accepts_crypto ? 'bg-green-500/20 text-green-300' : 'bg-gray-500/20 text-gray-300'}">
-                            ${project.accepts_crypto ? 'Sí' : 'No'}
+                    <td class="px-4 py-4 font-medium text-white">
+                        <div class="max-w-48 truncate">${project.name || 'Sin nombre'}</div>
+                        ${project.slug ? `<div class="text-xs text-gray-400">${project.slug}</div>` : ''}
+                    </td>
+                    <td class="px-4 py-4">${project.zone_name || 'Sin zona'}</td>
+                    <td class="px-4 py-4">
+                        <div class="max-w-32 truncate">${project.developer || 'Sin desarrollador'}</div>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <span class="px-2 py-1 bg-blue-500/20 text-blue-300 rounded-full text-xs font-medium">
+                            ${project.total_units || 0}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-center space-x-2 whitespace-nowrap">
-                        <button onclick="editProject('${project.id}')" class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Editar Proyecto">
-                            <i data-lucide="edit"></i>
-                        </button>
-                        <button onclick="deleteProject('${project.id}')" class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Proyecto">
-                            <i data-lucide="trash-2"></i>
-                        </button>
+                    <td class="px-4 py-4">
+                        <div class="flex flex-wrap gap-1">
+                            ${features.map(feature => `
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-500/20 text-green-300">
+                                    ${feature}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="flex items-center justify-center space-x-1">
+                            <button onclick="viewProject('${project.id}')" class="p-2 text-gray-400 hover:text-gray-300 transition-colors" title="Ver Detalles">
+                                <i data-lucide="eye"></i>
+                            </button>
+                            <button onclick="editProject('${project.id}')" class="p-2 text-blue-400 hover:text-blue-300 transition-colors" title="Editar Proyecto">
+                                <i data-lucide="edit"></i>
+                            </button>
+                            <button onclick="deleteProject('${project.id}')" class="p-2 text-red-500 hover:text-red-400 transition-colors" title="Eliminar Proyecto">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
 
             // Reinicializar iconos de Lucide
             lucide.createIcons();
@@ -591,9 +656,17 @@
             modalTitle.textContent = 'Editar Proyecto';
 
             document.getElementById('project-name').value = project.name || '';
+            document.getElementById('project-slug').value = project.slug || '';
             document.getElementById('project-developer').value = project.developer || '';
+            document.getElementById('project-subzone').value = project.sub_zone || '';
             document.getElementById('project-units').value = project.total_units || '';
+            document.getElementById('project-maps').value = project.maps_url || '';
+            document.getElementById('project-concept').value = project.concept || '';
+            document.getElementById('project-delivery').value = project.delivery_summary || '';
             document.getElementById('project-crypto').checked = project.accepts_crypto || false;
+            document.getElementById('project-turnkey').checked = project.turn_key || false;
+            document.getElementById('project-ocean').checked = project.has_ocean_view || false;
+            document.getElementById('project-condo').checked = project.condo_regime || false;
 
             document.getElementById('project-name').focus(); // Set focus on the first input
             projectModal.classList.add('active');
@@ -688,9 +761,17 @@
 
             const formData = {
                 name: document.getElementById('project-name').value.trim(),
-                developer: document.getElementById('project-developer').value.trim(),
+                slug: document.getElementById('project-slug').value.trim() || null,
+                developer: document.getElementById('project-developer').value.trim() || null,
+                sub_zone: document.getElementById('project-subzone').value.trim() || null,
                 total_units: parseInt(document.getElementById('project-units').value) || 0,
-                accepts_crypto: document.getElementById('project-crypto').checked
+                maps_url: document.getElementById('project-maps').value.trim() || null,
+                concept: document.getElementById('project-concept').value.trim() || null,
+                delivery_summary: document.getElementById('project-delivery').value.trim() || null,
+                accepts_crypto: document.getElementById('project-crypto').checked,
+                turn_key: document.getElementById('project-turnkey').checked,
+                has_ocean_view: document.getElementById('project-ocean').checked,
+                condo_regime: document.getElementById('project-condo').checked
             };
 
             if (!formData.name) {
@@ -748,9 +829,66 @@
             });
         });
 
+        // Ver detalles del proyecto
+        function viewProject(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+
+            const features = [];
+            if (project.accepts_crypto) features.push('Acepta Criptomonedas');
+            if (project.turn_key) features.push('Llave en Mano');
+            if (project.has_ocean_view) features.push('Vista al Mar');
+            if (project.condo_regime) features.push('Régimen de Condominio');
+
+            let content = `
+                <div class="space-y-4">
+                    <div><strong>Nombre:</strong> ${project.name || 'N/A'}</div>
+                    <div><strong>Slug:</strong> ${project.slug || 'N/A'}</div>
+                    <div><strong>Zona:</strong> ${project.zone_name || 'N/A'}</div>
+                    <div><strong>Sub Zona:</strong> ${project.sub_zone || 'N/A'}</div>
+                    <div><strong>Desarrollador:</strong> ${project.developer || 'N/A'}</div>
+                    <div><strong>Total de Unidades:</strong> ${project.total_units || 0}</div>
+                    <div><strong>Concepto:</strong> ${project.concept || 'N/A'}</div>
+                    <div><strong>Resumen de Entrega:</strong> ${project.delivery_summary || 'N/A'}</div>
+                    <div><strong>URL de Maps:</strong> ${project.maps_url ? `<a href="${project.maps_url}" target="_blank" class="text-blue-400 hover:text-blue-300">Ver en Google Maps</a>` : 'N/A'}</div>
+                    <div><strong>Características:</strong> ${features.length > 0 ? features.join(', ') : 'Ninguna'}</div>
+                </div>
+            `;
+
+            showModal('Detalles del Proyecto', content);
+        }
+
+        // Función para mostrar un modal genérico
+        function showModal(title, content) {
+            const modal = document.createElement('div');
+            modal.className = 'modal fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="glass-effect rounded-2xl p-6 m-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-white">${title}</h3>
+                        <button onclick="this.closest('.modal').remove()" class="text-gray-400 hover:text-white">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <div class="text-gray-300">${content}</div>
+                </div>
+            `;
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+            
+            document.body.appendChild(modal);
+            lucide.createIcons(); // Re-initialize icons
+        }
+
         // Hacer funciones globales para los botones
         window.editProject = editProject;
         window.deleteProject = deleteProject;
+        window.viewProject = viewProject;
     </script>
 </body>
 </html>
