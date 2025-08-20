@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -62,6 +61,13 @@
         .modal.active {
             display: flex;
         }
+
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="main-background">
@@ -74,27 +80,27 @@
                     <h1 class="text-2xl font-bold text-white">Miki<span class="bg-red-600 px-2 rounded-md ml-1 text-white">ai</span></h1>
                 </div>
                 <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                    <a href="#" data-section="dashboard" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
                         <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
                         Dashboard
                     </a>
-                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-white bg-white/10 rounded-lg">
+                    <a href="#" data-section="projects" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
                         <i data-lucide="building-2" class="w-5 h-5 mr-3"></i>
                         Proyectos
                     </a>
-                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                    <a href="#" data-section="units" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
                         <i data-lucide="home" class="w-5 h-5 mr-3"></i>
                         Unidades
                     </a>
-                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                    <a href="#" data-section="users" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
                         <i data-lucide="users" class="w-5 h-5 mr-3"></i>
                         Usuarios
                     </a>
-                    <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                    <a href="#" data-section="zones" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
                         <i data-lucide="map-pin" class="w-5 h-5 mr-3"></i>
                         Zonas
                     </a>
-                     <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                     <a href="#" data-section="config" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
                         <i data-lucide="settings" class="w-5 h-5 mr-3"></i>
                         Configuración
                     </a>
@@ -118,8 +124,8 @@
                 </button>
 
                 <div class="flex-1 hidden sm:block">
-                    <h2 class="text-xl md:text-2xl font-semibold text-white">Gestión de Proyectos</h2>
-                    <p class="text-xs md:text-sm text-gray-400">Aquí puedes ver, editar y crear nuevos proyectos.</p>
+                    <h2 id="header-title" class="text-xl md:text-2xl font-semibold text-white">Dashboard</h2>
+                    <p id="header-subtitle" class="text-xs md:text-sm text-gray-400">Resumen visual de la información más importante.</p>
                 </div>
                 <div class="flex items-center space-x-2 sm:space-x-4">
                     <div class="relative">
@@ -141,44 +147,163 @@
 
             <!-- Área de Contenido -->
             <div class="flex-1 overflow-y-auto p-4 sm:p-8 sm:pt-4">
-                <div class="glass-effect rounded-2xl p-4 sm:p-6">
-                    <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
-                        <h3 class="text-xl font-semibold text-white">Listado de Proyectos</h3>
-                        <button id="add-project-btn" class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-red-600/20 w-full sm:w-auto">
-                            <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
-                            Añadir Proyecto
-                        </button>
+                <!-- Dashboard Content -->
+                <div id="dashboard-content" class="content-section">
+                    <h1 class="text-3xl font-bold text-white mb-8">Dashboard</h1>
+
+                    <!-- Loading Spinner for Dashboard -->
+                    <div id="dashboard-loading" class="flex justify-center items-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
                     </div>
 
-                    <!-- Loading Spinner -->
-                    <div id="loading" class="flex justify-center items-center py-8">
-                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                    </div>
+                    <!-- Dashboard Content Container -->
+                    <div id="dashboard-data" style="display: none;">
+                        <!-- KPI Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="glass-effect rounded-xl p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm font-medium">Total Proyectos</p>
+                                        <p id="total-projects" class="text-2xl font-bold text-white">-</p>
+                                    </div>
+                                    <div class="p-3 rounded-full bg-blue-500/20">
+                                        <i data-lucide="building-2" class="w-6 h-6 text-blue-400"></i>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <!-- Tabla de Datos Responsiva -->
-                    <div id="projects-table" class="overflow-x-auto" style="display: none;">
-                        <table class="w-full text-sm text-left min-w-[640px]">
-                            <thead class="border-b border-white/20">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 font-medium">Nombre del Proyecto</th>
-                                    <th scope="col" class="px-6 py-3 font-medium">Zona</th>
-                                    <th scope="col" class="px-6 py-3 font-medium">Desarrollador</th>
-                                    <th scope="col" class="px-6 py-3 font-medium">Unidades</th>
-                                    <th scope="col" class="px-6 py-3 font-medium">Crypto</th>
-                                    <th scope="col" class="px-6 py-3 font-medium text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="projects-tbody">
-                                <!-- Los proyectos se cargarán dinámicamente aquí -->
-                            </tbody>
-                        </table>
-                    </div>
+                            <div class="glass-effect rounded-xl p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm font-medium">Unidades Disponibles</p>
+                                        <p id="available-units" class="text-2xl font-bold text-white">-</p>
+                                    </div>
+                                    <div class="p-3 rounded-full bg-green-500/20">
+                                        <i data-lucide="home" class="w-6 h-6 text-green-400"></i>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <!-- Mensaje cuando no hay proyectos -->
-                    <div id="no-projects" class="text-center py-8 text-gray-400" style="display: none;">
-                        <i data-lucide="folder-x" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
-                        <p>No hay proyectos disponibles</p>
+                            <div class="glass-effect rounded-xl p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm font-medium">Unidades Vendidas</p>
+                                        <p id="sold-units" class="text-2xl font-bold text-white">-</p>
+                                    </div>
+                                    <div class="p-3 rounded-full bg-red-500/20">
+                                        <i data-lucide="trending-up" class="w-6 h-6 text-red-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-effect rounded-xl p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm font-medium">Zonas Activas</p>
+                                        <p id="total-zones" class="text-2xl font-bold text-white">-</p>
+                                    </div>
+                                    <div class="p-3 rounded-full bg-purple-500/20">
+                                        <i data-lucide="map-pin" class="w-6 h-6 text-purple-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                            <!-- Projects by Zone Chart -->
+                            <div class="glass-effect rounded-xl p-6">
+                                <h3 class="text-lg font-semibold text-white mb-4">Proyectos por Zona</h3>
+                                <div id="projects-chart" class="h-64 flex items-center justify-center text-gray-400">
+                                    <div class="text-center">
+                                        <i data-lucide="pie-chart" class="w-12 h-12 mx-auto mb-2"></i>
+                                        <p>Cargando gráfica...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Units by Status Chart -->
+                            <div class="glass-effect rounded-xl p-6">
+                                <h3 class="text-lg font-semibold text-white mb-4">Estado de Unidades</h3>
+                                <div id="units-chart" class="h-64 flex items-center justify-center text-gray-400">
+                                    <div class="text-center">
+                                        <i data-lucide="bar-chart-3" class="w-12 h-12 mx-auto mb-2"></i>
+                                        <p>Cargando gráfica...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="glass-effect rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-white mb-4">Actividad Reciente</h3>
+                            <div id="recent-activity" class="space-y-3">
+                                <div class="flex items-center justify-center py-8 text-gray-400">
+                                    <i data-lucide="activity" class="w-6 h-6 mr-2"></i>
+                                    <span>Cargando actividad reciente...</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <div id="projects-content" class="content-section">
+                    <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                            <h3 class="text-xl font-semibold text-white">Listado de Proyectos</h3>
+                            <button id="add-project-btn" class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-red-600/20 w-full sm:w-auto">
+                                <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+                                Añadir Proyecto
+                            </button>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="loading" class="flex justify-center items-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        </div>
+
+                        <!-- Tabla de Datos Responsiva -->
+                        <div id="projects-table" class="overflow-x-auto" style="display: none;">
+                            <table class="w-full text-sm text-left min-w-[640px]">
+                                <thead class="border-b border-white/20">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 font-medium">Nombre del Proyecto</th>
+                                        <th scope="col" class="px-6 py-3 font-medium">Zona</th>
+                                        <th scope="col" class="px-6 py-3 font-medium">Desarrollador</th>
+                                        <th scope="col" class="px-6 py-3 font-medium">Unidades</th>
+                                        <th scope="col" class="px-6 py-3 font-medium">Crypto</th>
+                                        <th scope="col" class="px-6 py-3 font-medium text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projects-tbody">
+                                    <!-- Los proyectos se cargarán dinámicamente aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mensaje cuando no hay proyectos -->
+                        <div id="no-projects" class="text-center py-8 text-gray-400" style="display: none;">
+                            <i data-lucide="folder-x" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                            <p>No hay proyectos disponibles</p>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Placeholder for other sections -->
+                 <div id="units-content" class="content-section">
+                    <h1 class="text-3xl font-bold text-white mb-8">Unidades</h1>
+                    <p class="text-gray-400">Contenido de Unidades...</p>
+                </div>
+                 <div id="users-content" class="content-section">
+                    <h1 class="text-3xl font-bold text-white mb-8">Usuarios</h1>
+                    <p class="text-gray-400">Contenido de Usuarios...</p>
+                </div>
+                 <div id="zones-content" class="content-section">
+                    <h1 class="text-3xl font-bold text-white mb-8">Zonas</h1>
+                    <p class="text-gray-400">Contenido de Zonas...</p>
+                </div>
+                 <div id="config-content" class="content-section">
+                    <h1 class="text-3xl font-bold text-white mb-8">Configuración</h1>
+                    <p class="text-gray-400">Contenido de Configuración...</p>
                 </div>
             </div>
         </main>
@@ -246,6 +371,14 @@
         const projectForm = document.getElementById('project-form');
         const closeModal = document.getElementById('close-modal');
         const cancelBtn = document.getElementById('cancel-btn');
+        const headerTitle = document.getElementById('header-title');
+        const headerSubtitle = document.getElementById('header-subtitle');
+        const dashboardLoading = document.getElementById('dashboard-loading');
+        const dashboardData = document.getElementById('dashboard-data');
+        const totalProjectsEl = document.getElementById('total-projects');
+        const availableUnitsEl = document.getElementById('available-units');
+        const soldUnitsEl = document.getElementById('sold-units');
+        const totalZonesEl = document.getElementById('total-zones');
 
         // API Base URL
         const API_BASE_URL = '/api';
@@ -260,11 +393,17 @@
                     },
                     ...options
                 });
-                
+
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                 }
-                
+
+                // Handle cases where the response might be empty (e.g., 204 No Content)
+                if (response.status === 204) {
+                    return null;
+                }
+
                 return await response.json();
             } catch (error) {
                 console.error('API Error:', error);
@@ -272,13 +411,103 @@
             }
         }
 
+        // Navegación entre secciones
+        function showSection(sectionName) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Mostrar la sección seleccionada
+            const targetSection = document.getElementById(sectionName + '-content');
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+
+            // Actualizar navegación activa
+            document.querySelectorAll('aside nav a').forEach(link => {
+                link.classList.remove('bg-white/10', 'text-white');
+                link.classList.add('text-gray-300');
+            });
+
+            // Marcar el enlace actual como activo
+            const currentLink = document.querySelector(`aside nav a[data-section="${sectionName}"]`);
+            if (currentLink) {
+                currentLink.classList.remove('text-gray-300');
+                currentLink.classList.add('bg-white/10', 'text-white');
+            }
+
+            // Actualizar título de la cabecera
+            switch(sectionName) {
+                case 'dashboard':
+                    headerTitle.textContent = 'Dashboard';
+                    headerSubtitle.textContent = 'Resumen visual de la información más importante.';
+                    break;
+                case 'projects':
+                    headerTitle.textContent = 'Gestión de Proyectos';
+                    headerSubtitle.textContent = 'Aquí puedes ver, editar y crear nuevos proyectos.';
+                    break;
+                // Add other section titles as needed
+            }
+
+            // Cargar datos específicos de la sección
+            switch(sectionName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'projects':
+                    loadProjects();
+                    break;
+                case 'units':
+                    // TODO: Implementar carga de unidades
+                    break;
+                case 'users':
+                    // TODO: Implementar carga de usuarios
+                    break;
+                case 'zones':
+                    // TODO: Implementar carga de zonas
+                    break;
+                case 'config':
+                    // TODO: Implementar configuración
+                    break;
+            }
+        }
+
+        // Cargar datos del Dashboard
+        async function loadDashboard() {
+            dashboardLoading.style.display = 'flex';
+            dashboardData.style.display = 'none';
+
+            try {
+                const stats = await apiRequest('/dashboard/stats');
+                if (stats) {
+                    totalProjectsEl.textContent = stats.total_projects;
+                    availableUnitsEl.textContent = stats.available_units;
+                    soldUnitsEl.textContent = stats.sold_units;
+                    totalZonesEl.textContent = stats.total_zones;
+                }
+
+                // TODO: Load chart data and recent activity
+                // For now, we just show the container
+                dashboardLoading.style.display = 'none';
+                dashboardData.style.display = 'block';
+                lucide.createIcons(); // Re-initialize icons after content is loaded
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showError('Error al cargar los datos del dashboard');
+                dashboardLoading.style.display = 'none';
+                // Optionally display an error message in the dashboard area
+            }
+        }
+
         // Cargar proyectos desde la API
         async function loadProjects() {
-            try {
-                loading.style.display = 'flex';
-                projectsTable.style.display = 'none';
-                noProjects.style.display = 'none';
+            loading.style.display = 'flex';
+            projectsTable.style.display = 'none';
+            noProjects.style.display = 'none';
 
+            try {
                 projects = await apiRequest('/projects');
                 renderProjects();
             } catch (error) {
@@ -292,7 +521,7 @@
         // Renderizar proyectos en la tabla
         function renderProjects(filteredProjects = null) {
             const projectsToRender = filteredProjects || projects;
-            
+
             if (projectsToRender.length === 0) {
                 projectsTable.style.display = 'none';
                 noProjects.style.display = 'block';
@@ -335,7 +564,7 @@
                 return;
             }
 
-            const filtered = projects.filter(project => 
+            const filtered = projects.filter(project =>
                 (project.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (project.developer || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (project.zone_name || '').toLowerCase().includes(searchTerm.toLowerCase())
@@ -345,10 +574,11 @@
         }
 
         // Abrir modal para crear proyecto
-        function openCreateModal() {
+        function openAddProjectModal() {
             editingProjectId = null;
             modalTitle.textContent = 'Nuevo Proyecto';
             projectForm.reset();
+            document.getElementById('project-name').focus(); // Set focus on the first input
             projectModal.classList.add('active');
         }
 
@@ -359,12 +589,13 @@
 
             editingProjectId = projectId;
             modalTitle.textContent = 'Editar Proyecto';
-            
+
             document.getElementById('project-name').value = project.name || '';
             document.getElementById('project-developer').value = project.developer || '';
             document.getElementById('project-units').value = project.total_units || '';
             document.getElementById('project-crypto').checked = project.accepts_crypto || false;
-            
+
+            document.getElementById('project-name').focus(); // Set focus on the first input
             projectModal.classList.add('active');
         }
 
@@ -384,17 +615,18 @@
                         method: 'PUT',
                         body: JSON.stringify(formData)
                     });
+                    showSuccess('Proyecto actualizado correctamente');
                 } else {
                     // Crear nuevo proyecto
                     await apiRequest('/projects', {
                         method: 'POST',
                         body: JSON.stringify(formData)
                     });
+                    showSuccess('Proyecto creado correctamente');
                 }
 
                 await loadProjects();
                 closeProjectModal();
-                showSuccess(editingProjectId ? 'Proyecto actualizado correctamente' : 'Proyecto creado correctamente');
             } catch (error) {
                 console.error('Error saving project:', error);
                 showError('Error al guardar el proyecto');
@@ -424,14 +656,16 @@
         function showMessage(message, type = 'info') {
             const messageDiv = document.createElement('div');
             messageDiv.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white ${
-                type === 'success' ? 'bg-green-600' : 
+                type === 'success' ? 'bg-green-600' :
                 type === 'error' ? 'bg-red-600' : 'bg-blue-600'
             }`;
             messageDiv.textContent = message;
             document.body.appendChild(messageDiv);
 
             setTimeout(() => {
-                document.body.removeChild(messageDiv);
+                if (document.body.contains(messageDiv)) {
+                    document.body.removeChild(messageDiv);
+                }
             }, 3000);
         }
 
@@ -443,50 +677,75 @@
             showMessage(message, 'error');
         }
 
-        // Event Listeners
-        menuButton.addEventListener('click', (e) => {
-            e.stopPropagation();
+        // Toggle sidebar visibility
+        function toggleSidebar() {
             sidebar.classList.toggle('-translate-x-full');
-        });
+        }
 
-        document.addEventListener('click', (e) => {
-            if (!sidebar.classList.contains('-translate-x-full') && !sidebar.contains(e.target) && !menuButton.contains(e.target)) {
-                sidebar.classList.add('-translate-x-full');
-            }
-        });
-
-        searchInput.addEventListener('input', (e) => {
-            filterProjects(e.target.value);
-        });
-
-        addProjectBtn.addEventListener('click', openCreateModal);
-        closeModal.addEventListener('click', closeProjectModal);
-        cancelBtn.addEventListener('click', closeProjectModal);
-
-        projectForm.addEventListener('submit', (e) => {
+        // Handle form submission for projects
+        function handleFormSubmit(e) {
             e.preventDefault();
-            
+
             const formData = {
-                name: document.getElementById('project-name').value,
-                developer: document.getElementById('project-developer').value,
+                name: document.getElementById('project-name').value.trim(),
+                developer: document.getElementById('project-developer').value.trim(),
                 total_units: parseInt(document.getElementById('project-units').value) || 0,
                 accepts_crypto: document.getElementById('project-crypto').checked
             };
 
-            saveProject(formData);
-        });
-
-        // Cerrar modal al hacer click fuera
-        projectModal.addEventListener('click', (e) => {
-            if (e.target === projectModal) {
-                closeProjectModal();
+            if (!formData.name) {
+                alert('El nombre del proyecto es obligatorio.');
+                return;
             }
-        });
 
-        // Inicializar la aplicación
-        document.addEventListener('DOMContentLoaded', () => {
+            saveProject(formData);
+        }
+
+        // Handle search input
+        function handleSearch(e) {
+            filterProjects(e.target.value);
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar Lucide Icons
             lucide.createIcons();
-            loadProjects();
+
+            // Agregar event listeners para navegación
+            document.querySelectorAll('aside nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    if (section) {
+                        showSection(section);
+                    }
+                });
+            });
+
+            // Mostrar dashboard por defecto
+            showSection('dashboard');
+
+            // Event listeners para proyectos
+            addProjectBtn.addEventListener('click', openAddProjectModal);
+            closeModal.addEventListener('click', closeProjectModal);
+            cancelBtn.addEventListener('click', closeProjectModal);
+            projectForm.addEventListener('submit', handleFormSubmit);
+            searchInput.addEventListener('input', handleSearch);
+            menuButton.addEventListener('click', toggleSidebar);
+
+            // Cerrar modal al hacer click fuera
+            projectModal.addEventListener('click', function(e) {
+                if (e.target === projectModal) {
+                    closeProjectModal();
+                }
+            });
+
+             // Cerrar sidebar si se hace click fuera de él
+             document.addEventListener('click', function(e) {
+                if (!sidebar.classList.contains('-translate-x-full') && !sidebar.contains(e.target) && !menuButton.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
         });
 
         // Hacer funciones globales para los botones

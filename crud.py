@@ -112,7 +112,66 @@ def get_dashboard_stats(conn):
         stats['total_zones'] = cur.fetchone()['total']
         cur.execute("SELECT COUNT(*) as total FROM units WHERE status ILIKE 'Disponible'")
         stats['available_units'] = cur.fetchone()['total']
+        cur.execute("SELECT COUNT(*) as total FROM units WHERE status ILIKE 'Vendida'")
+        stats['sold_units'] = cur.fetchone()['total']
+        cur.execute("SELECT COUNT(*) as total FROM units WHERE status ILIKE 'Reservada'")
+        stats['reserved_units'] = cur.fetchone()['total']
+        cur.execute("SELECT COUNT(DISTINCT developer) as total FROM projects WHERE developer IS NOT NULL")
+        stats['total_developers'] = cur.fetchone()['total']
     return stats
+
+def get_recent_activity(conn, limit: int = 10):
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("""
+            SELECT 
+                'project' as type,
+                p.name as title,
+                'Proyecto creado' as action,
+                p.created_at as timestamp,
+                p.developer as description
+            FROM projects p
+            UNION ALL
+            SELECT 
+                'unit' as type,
+                CONCAT(pr.name, ' - ', u.unit_identifier) as title,
+                CASE 
+                    WHEN u.status = 'Vendida' THEN 'Unidad vendida'
+                    WHEN u.status = 'Reservada' THEN 'Unidad reservada'
+                    ELSE 'Unidad actualizada'
+                END as action,
+                u.updated_at as timestamp,
+                u.status as description
+            FROM units u
+            JOIN projects pr ON u.project_id = pr.id
+            ORDER BY timestamp DESC
+            LIMIT %s
+        """, (limit,))
+        return cur.fetchall()
+
+def get_projects_by_zone(conn):
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("""
+            SELECT 
+                COALESCE(z.name, 'Sin zona') as zone_name,
+                COUNT(p.id) as project_count
+            FROM projects p
+            LEFT JOIN zones z ON p.zone = z.id
+            GROUP BY z.name
+            ORDER BY project_count DESC
+        """)
+        return cur.fetchall()
+
+def get_units_by_status(conn):
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("""
+            SELECT 
+                COALESCE(status, 'Sin estado') as status,
+                COUNT(*) as unit_count
+            FROM units
+            GROUP BY status
+            ORDER BY unit_count DESC
+        """)
+        return cur.fetchall()
 
 # --- CRUD para Unidades ---
 def get_unit(conn, unit_id: uuid.UUID):
