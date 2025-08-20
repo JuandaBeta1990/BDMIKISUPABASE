@@ -682,7 +682,10 @@
         // Función para hacer peticiones HTTP
         async function apiRequest(url, options = {}) {
             try {
-                const response = await fetch(API_BASE_URL + url, {
+                // Asegurar que la URL termine con / para evitar redirects
+                const finalUrl = url.endsWith('/') ? API_BASE_URL + url : API_BASE_URL + url + '/';
+                
+                const response = await fetch(finalUrl, {
                     headers: {
                         'Content-Type': 'application/json',
                         ...options.headers
@@ -1416,6 +1419,7 @@
 
             try {
                 zones = await apiRequest('/zones');
+                console.log('Zones loaded:', zones); // Debug log
                 renderZones();
             } catch (error) {
                 console.error('Error loading zones:', error);
@@ -1496,6 +1500,7 @@
                     });
                     showSuccess('Zona actualizada correctamente');
                 } else {
+                    // No añadir / extra aquí ya que apiRequest lo maneja
                     await apiRequest('/zones', {
                         method: 'POST',
                         body: JSON.stringify(formData)
@@ -1516,6 +1521,7 @@
             }
 
             try {
+                // No añadir / extra para DELETE ya que apiRequest lo maneja
                 await apiRequest(`/zones/${zoneId}`, {
                     method: 'DELETE'
                 });

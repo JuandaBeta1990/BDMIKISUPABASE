@@ -1,22 +1,7 @@
 
 import psycopg2
-import os
 from uuid import uuid4
-
-# Database configuration
-DATABASE_HOST = os.getenv("DATABASE_HOST", "localhost")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "mikiai")
-DATABASE_USER = os.getenv("DATABASE_USER", "postgres")
-DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD", "password")
-DATABASE_PORT = os.getenv("DATABASE_PORT", "5432")
-
-def get_connection():
-    database_url = os.getenv('DATABASE_URL')
-    if database_url:
-        return psycopg2.connect(database_url)
-    else:
-        conn_string = f"host='{DATABASE_HOST}' dbname='{DATABASE_NAME}' user='{DATABASE_USER}' password='{DATABASE_PASSWORD}' port='{DATABASE_PORT}'"
-        return psycopg2.connect(conn_string)
+from database import get_connection
 
 def insert_sample_data():
     try:
@@ -26,16 +11,18 @@ def insert_sample_data():
         # Insertar zonas de ejemplo
         zone_ids = []
         zones = [
-            ("Zona Norte", "Zona turística principal"),
-            ("Centro", "Centro histórico y comercial"),
-            ("Playa", "Zona costera y hoteles")
+            ("Tulum", "Zona turística con cenotes y ruinas mayas"),
+            ("Playa del Carmen", "Centro turístico de la Riviera Maya"),
+            ("Cozumel", "Isla turística con arrecifes de coral"),
+            ("Cancún", "Destino turístico internacional"),
+            ("Puerto Morelos", "Pueblo mágico pesquero")
         ]
         
         for name, description in zones:
             zone_id = str(uuid4())
             zone_ids.append(zone_id)
             cur.execute(
-                "INSERT INTO zones (id, name, description) VALUES (%s, %s, %s) ON CONFLICT (id) DO NOTHING",
+                "INSERT INTO zones (id, name, description) VALUES (%s, %s, %s) ON CONFLICT (name) DO NOTHING",
                 (zone_id, name, description)
             )
         
@@ -44,35 +31,38 @@ def insert_sample_data():
             {
                 "name": "Residencial Marina Bay",
                 "slug": "marina-bay",
-                "zone": zone_ids[0],
+                "zone": zone_ids[0],  # Tulum
                 "developer": "Desarrollos del Caribe",
                 "total_units": 120,
-                "concept": "Apartamentos frente al mar",
+                "concept": "Apartamentos frente al mar con vista a cenotes",
                 "accepts_crypto": True,
                 "turn_key": True,
-                "has_ocean_view": True
+                "has_ocean_view": True,
+                "condo_regime": True
             },
             {
                 "name": "Torres del Centro",
                 "slug": "torres-centro",
-                "zone": zone_ids[1],
+                "zone": zone_ids[1],  # Playa del Carmen
                 "developer": "Constructora Moderna",
                 "total_units": 80,
                 "concept": "Apartamentos en el centro de la ciudad",
                 "accepts_crypto": False,
                 "turn_key": False,
-                "has_ocean_view": False
+                "has_ocean_view": False,
+                "condo_regime": True
             },
             {
-                "name": "Villas Playa Dorada",
-                "slug": "villas-playa",
-                "zone": zone_ids[2],
-                "developer": "Inmobiliaria Premium",
-                "total_units": 45,
-                "concept": "Villas de lujo en primera línea de playa",
+                "name": "Cozumel Paradise",
+                "slug": "cozumel-paradise",
+                "zone": zone_ids[2],  # Cozumel
+                "developer": "Island Developers",
+                "total_units": 60,
+                "concept": "Condominios de lujo en isla tropical",
                 "accepts_crypto": True,
                 "turn_key": True,
-                "has_ocean_view": True
+                "has_ocean_view": True,
+                "condo_regime": True
             }
         ]
         
@@ -83,18 +73,19 @@ def insert_sample_data():
                     id, name, slug, zone, developer, total_units, concept,
                     accepts_crypto, turn_key, has_ocean_view, condo_regime
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO NOTHING
+                ON CONFLICT (slug) DO NOTHING
             """, (
-                project_id, project["name"], project["slug"], project["zone"],
+                project_id, project["name"], project["slug"], project["zone"], 
                 project["developer"], project["total_units"], project["concept"],
-                project["accepts_crypto"], project["turn_key"], project["has_ocean_view"], False
+                project["accepts_crypto"], project["turn_key"], 
+                project["has_ocean_view"], project["condo_regime"]
             ))
         
         conn.commit()
         print("Datos de ejemplo insertados correctamente")
         
     except Exception as e:
-        print(f"Error al insertar datos: {e}")
+        print(f"Error insertando datos de ejemplo: {e}")
         if conn:
             conn.rollback()
     finally:
