@@ -1,0 +1,21 @@
+cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+API Error: 
+TypeError {}
+
+at t.value (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Error loading projects: 
+TypeError {}
+
+at t.value (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Failed to fetch
+at window.fetch (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:218642)
+at Object.apply (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/__replco/static/devtools/injected.js:253:39)
+at apiRequest (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/:257:40)
+at loadProjects (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/:283:34)
+at HTMLDocument.<anonymous> (https://e8ad69e3-01b6-46cc-9a73-bac367c0daeb-00-3djghsnc8bvey.kirk.replit.dev/:490:13)
