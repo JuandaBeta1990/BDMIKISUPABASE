@@ -793,7 +793,7 @@
             dashboardData.style.display = 'none';
 
             try {
-                const stats = await apiRequest('/dashboard/stats');
+                const stats = await apiRequest('/dashboard/stats/');
                 if (stats) {
                     totalProjectsEl.textContent = stats.total_projects;
                     availableUnitsEl.textContent = stats.available_units;

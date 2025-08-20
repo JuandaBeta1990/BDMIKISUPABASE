@@ -61,7 +61,7 @@ def get_projects(conn, skip: int = 0, limit: int = 100, search: str = ""):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         query = """
             SELECT p.id, p.name, p.slug, p.developer, p.total_units, p.accepts_crypto,
-                   z.name as zone_name 
+                   p.created_at, p.updated_at, z.name as zone_name 
             FROM projects p
             LEFT JOIN zones z ON p.zone = z.id
         """
