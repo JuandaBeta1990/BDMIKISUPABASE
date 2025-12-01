@@ -196,6 +196,56 @@
                                 </div>
                             </div>
 
+                            <div class="glass-effect rounded-xl p-6 mb-8">
+                                <h2 class="text-white text-lg font-semibold mb-4">Mensajes por día (WhatsApp)</h2>
+                                <canvas id="chart-daily"></canvas>
+                            </div>
+
+                            <!-- ============================================= -->
+<!--       GRÁFICA: MENSAJES POR DÍA              -->
+<!-- ============================================= -->
+<div class="glass-effect rounded-xl p-6 mb-8">
+    <h2 class="text-white text-lg font-semibold mb-4">Mensajes por día (WhatsApp)</h2>
+    <canvas id="chart-daily"></canvas>
+</div>
+
+<!-- ============================================= -->
+<!--   GRÁFICA: MENSAJES POR USUARIO               -->
+<!-- ============================================= -->
+<div class="glass-effect rounded-xl p-6 mb-8">
+    <h2 class="text-white text-lg font-semibold mb-4">Mensajes por usuario</h2>
+    <canvas id="chart-by-user"></canvas>
+</div>
+
+<!-- ============================================= -->
+<!--      GRÁFICA: PALABRAS FRECUENTES            -->
+<!-- ============================================= -->
+<div class="glass-effect rounded-xl p-6 mb-8">
+    <h2 class="text-white text-lg font-semibold mb-4">Preguntas / palabras frecuentes</h2>
+    <canvas id="chart-faq"></canvas>
+</div>
+
+<!-- ============================================= -->
+<!--         TABLA: ÚLTIMOS MENSAJES               -->
+<!-- ============================================= -->
+<div class="glass-effect rounded-xl p-6 mb-8">
+    <h2 class="text-white text-lg font-semibold mb-4">Últimos mensajes</h2>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-gray-900 text-white rounded-xl">
+            <thead class="bg-gray-800">
+                <tr>
+                    <th class="px-4 py-3 text-left">Usuario</th>
+                    <th class="px-4 py-3 text-left">Mensaje</th>
+                    <th class="px-4 py-3 text-left">Fecha</th>
+                </tr>
+            </thead>
+            <tbody id="table-last-messages"></tbody>
+        </table>
+    </div>
+</div>
+
+
                             <div class="glass-effect rounded-xl p-6">
                                 <div class="flex items-center justify-between">
                                     <div>
@@ -648,7 +698,8 @@
         </div>
     </div>
 
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script >
         // Variables globales
         let projects = [];
         let editingProjectId = null;
@@ -788,32 +839,53 @@
         }
 
         // Cargar datos del Dashboard
-        async function loadDashboard() {
-            dashboardLoading.style.display = 'flex';
-            dashboardData.style.display = 'none';
+        // =========================================================
+//     DASHBOARD - CARGA COMPLETA DESDE SUPABASE
+// =========================================================
+async function loadDashboard() {
+    dashboardLoading.style.display = 'flex';
+    dashboardData.style.display = 'none';
 
-            try {
-                const stats = await apiRequest('/dashboard/stats/');
-                if (stats) {
-                    totalProjectsEl.textContent = stats.total_projects;
-                    availableUnitsEl.textContent = stats.available_units;
-                    soldUnitsEl.textContent = stats.sold_units;
-                    totalZonesEl.textContent = stats.total_zones;
-                }
-
-                // TODO: Load chart data and recent activity
-                // For now, we just show the container
-                dashboardLoading.style.display = 'none';
-                dashboardData.style.display = 'block';
-                lucide.createIcons(); // Re-initialize icons after content is loaded
-
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-                showError('Error al cargar los datos del dashboard');
-                dashboardLoading.style.display = 'none';
-                // Optionally display an error message in the dashboard area
-            }
+    try {
+        // 1) KPI FAKE TEMPORAL - NO BORRAR
+        const stats = await apiRequest('/dashboard/stats/');
+        if (stats) {
+            totalProjectsEl.textContent = stats.total_projects;
+            availableUnitsEl.textContent = stats.available_units;
+            soldUnitsEl.textContent = stats.sold_units;
+            totalZonesEl.textContent = stats.total_zones;
         }
+
+        // 2) WHATSAPP: mensajes por día
+        const daily = await apiRequest('/dashboard/whatsapp/daily/');
+
+        // 3) WHATSAPP: mensajes por usuario
+        const byUser = await apiRequest('/dashboard/whatsapp/by-user/');
+
+        // 4) WHATSAPP: palabras frecuentes
+        const faq = await apiRequest('/dashboard/whatsapp/faq/');
+
+        // 5) WHATSAPP: últimos mensajes
+        const last = await apiRequest('/dashboard/whatsapp/last/');
+
+        // 6) Pintar gráficas
+        renderDailyChart(daily);
+        renderByUserChart(byUser);
+        renderFAQChart(faq);
+        renderLastMessagesTable(last);
+
+        dashboardLoading.style.display = 'none';
+        dashboardData.style.display = 'block';
+
+        lucide.createIcons();
+
+    } catch (error) {
+        console.error("Error cargando dashboard:", error);
+        showError("Error al cargar datos del dashboard");
+        dashboardLoading.style.display = 'none';
+    }
+}
+
 
         // Cargar proyectos desde la API
         async function loadProjects() {
@@ -1760,6 +1832,75 @@
                 }
             });
         }
+function renderDailyChart(data) {
+    if (!data || data.length === 0) return;
+
+    const ctx = document.getElementById("chart-daily");
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: data.map(x => x.fecha),
+            datasets: [{
+                label: "Mensajes por día",
+                data: data.map(x => x.total),
+                borderWidth: 2,
+                fill: false
+            }]
+        }
+    });
+}
+function renderByUserChart(data) {
+    if (!data || data.length === 0) return;
+
+    const ctx = document.getElementById("chart-by-user");
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: data.map(x => x.usuario),
+            datasets: [{
+                label: "Mensajes",
+                data: data.map(x => x.total),
+                borderWidth: 1
+            }]
+        }
+    });
+}
+function renderFAQChart(data) {
+    if (!data || data.length === 0) return;
+
+    const ctx = document.getElementById("chart-faq");
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: data.map(x => x.palabra),
+            datasets: [{
+                label: "Frecuencia",
+                data: data.map(x => x.total),
+                borderWidth: 1
+            }]
+        }
+    });
+}
+function renderLastMessagesTable(rows) {
+    const tbody = document.getElementById("table-last-messages");
+    if (!tbody) return;
+
+    tbody.innerHTML = rows.map(msg => `
+        <tr class="border-b border-gray-700">
+            <td class="px-4 py-2">${msg.nombreusuario || msg.idusuario}</td>
+            <td class="px-4 py-2">${msg.historial_conversacion}</td>
+            <td class="px-4 py-2">${msg.fecha}</td>
+        </tr>
+    `).join("");
+}
+
+
 
         // Hacer funciones globales para los botones
         window.editProject = editProject;

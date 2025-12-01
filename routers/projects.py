@@ -6,7 +6,7 @@ import uuid
 from uuid import UUID
 import schemas
 import crud
-from database import get_db
+from database import get_db1
 
 router = APIRouter(
     prefix="/projects",
@@ -14,15 +14,15 @@ router = APIRouter(
 )
 
 @router.post("/", response_model=schemas.ProjectWithZone, status_code=201)
-def create_project_endpoint(project: schemas.ProjectCreate, conn = Depends(get_db)):
+def create_project_endpoint(project: schemas.ProjectCreate, conn = Depends(get_db1)):
     return crud.create_project(conn=conn, project=project)
 
 @router.get("/", response_model=List[schemas.ProjectWithZone])
-def read_projects_endpoint(skip: int = 0, limit: int = 100, conn = Depends(get_db)):
+def read_projects_endpoint(skip: int = 0, limit: int = 100, conn = Depends(get_db1)):
     return crud.get_projects(conn=conn, skip=skip, limit=limit)
 
 @router.get("/{project_id}", response_model=schemas.ProjectWithZone)
-def read_project_endpoint(project_id: UUID, conn = Depends(get_db)):
+def read_project_endpoint(project_id: UUID, conn = Depends(get_db1)):
     db_project = crud.get_project(conn=conn, project_id=project_id)
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -30,7 +30,7 @@ def read_project_endpoint(project_id: UUID, conn = Depends(get_db)):
 
 # --- NUEVO ENDPOINT PARA ACTUALIZAR (EDITAR) ---
 @router.put("/{project_id}", response_model=schemas.ProjectWithZone)
-def update_project_endpoint(project_id: UUID, project: schemas.ProjectUpdate, conn = Depends(get_db)):
+def update_project_endpoint(project_id: UUID, project: schemas.ProjectUpdate, conn = Depends(get_db1)):
     db_project = crud.get_project(conn=conn, project_id=project_id)
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -38,7 +38,7 @@ def update_project_endpoint(project_id: UUID, project: schemas.ProjectUpdate, co
 
 # --- ENDPOINT PARA ELIMINAR PROYECTO ---
 @router.delete("/{project_id}")
-def delete_project_endpoint(project_id: UUID, conn = Depends(get_db)):
+def delete_project_endpoint(project_id: UUID, conn = Depends(get_db1)):
     db_project = crud.get_project(conn=conn, project_id=project_id)
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -48,3 +48,7 @@ def delete_project_endpoint(project_id: UUID, conn = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Project not found")
     
     return {"message": "Project deleted successfully"}
+
+@router.get("/projects")
+def list_projects(skip: int = 0, limit: int = 100, conn = Depends(get_db1)):
+    return crud.get_projects(conn, skip=skip, limit=limit)

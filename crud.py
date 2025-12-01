@@ -5,115 +5,146 @@ from typing import List, Optional
 import schemas # <-- CORRECCIÓN: Se cambió de 'from . import schemas' a una importación directa.
 
 # --- CRUD para Zonas ---
-def get_zone(conn, zone_id: uuid.UUID):
+def get_zone(conn, zone_id: int):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute("SELECT * FROM zones WHERE id = %s", (str(zone_id),))
+        cur.execute("SELECT id, name, description FROM zones WHERE id = %s", (zone_id,))
         return cur.fetchone()
 
 def get_zones(conn, skip: int = 0, limit: int = 100):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("""
-            SELECT z.*, COUNT(p.id) AS project_count
-            FROM zones z LEFT JOIN projects p ON z.id = p.zone
-            GROUP BY z.id, z.name, z.description, z.created_at, z.updated_at 
-            ORDER BY z.created_at DESC LIMIT %s OFFSET %s
+            SELECT 
+                z.id,
+                z.name,
+                z.description,
+                COUNT(p.id) AS project_count
+            FROM zones z
+            LEFT JOIN projects p ON p.zone_id = z.id
+            GROUP BY z.id, z.name, z.description
+            ORDER BY z.id ASC
+            LIMIT %s OFFSET %s
         """, (limit, skip))
         return cur.fetchall()
 
-def update_zone(conn, zone_id: uuid.UUID, zone: schemas.ZoneUpdate):
+
+def update_zone(conn, zone_id: int, zone: schemas.ZoneUpdate):
     update_data = zone.model_dump(exclude_unset=True)
+
     if not update_data:
         return get_zone(conn, zone_id)
 
     set_clause = ", ".join([f"{key} = %s" for key in update_data.keys()])
     values = list(update_data.values())
-    values.append(str(zone_id))
+    values.append(zone_id)
 
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        query = f"UPDATE zones SET {set_clause}, updated_at = NOW() WHERE id = %s"
-        cur.execute(query, tuple(values))
+        cur.execute(f"UPDATE zones SET {set_clause} WHERE id = %s", tuple(values))
         conn.commit()
+    
     return get_zone(conn, zone_id)
 
-def delete_zone(conn, zone_id: uuid.UUID):
-    with conn.cursor() as cur:
-        cur.execute("DELETE FROM zones WHERE id = %s", (str(zone_id),))
-        rowcount = cur.rowcount
-        conn.commit()
-        return rowcount
 
+def delete_zone(conn, zone_id: int):
+    with conn.cursor() as cur:
+        cur.execute("DELETE FROM zones WHERE id = %s", (zone_id,))
+        deleted = cur.rowcount
+        conn.commit()
+        return deleted
+
+    
 def create_zone(conn, zone: schemas.ZoneCreate):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute("INSERT INTO zones (name, description) VALUES (%s, %s) RETURNING *", (zone.name, zone.description))
-        new_zone = cur.fetchone()
+        cur.execute(
+            "INSERT INTO zones (name, description) VALUES (%s, %s) RETURNING id",
+            (zone.name, zone.description)
+        )
+        new_id = cur.fetchone()["id"]
         conn.commit()
-        return new_zone
+        return get_zone(conn, new_id)
+
 
 # --- CRUD para Proyectos ---
 def get_project(conn, project_id: uuid.UUID):
-    """Obtiene un único proyecto por su ID, incluyendo el nombre de la zona."""
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute("SELECT p.*, z.name as zone_name FROM projects p LEFT JOIN zones z ON p.zone = z.id WHERE p.id = %s", (str(project_id),))
+        cur.execute("""
+            SELECT 
+                p.id,
+                p.name,
+                p.zone_id,
+                p.general_field_id,
+                p.prices_field_id,
+                z.name AS zone_name
+            FROM projects p
+            LEFT JOIN zones z ON p.zone_id = z.id
+            WHERE p.id = %s
+        """, (project_id,))
         return cur.fetchone()
 
+
 def get_projects(conn, skip: int = 0, limit: int = 100, search: str = ""):
-    """Obtiene una lista de proyectos, con paginación y búsqueda."""
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         query = """
-            SELECT p.id, p.name, p.slug, p.developer, p.total_units, p.accepts_crypto,
-                   p.created_at, p.updated_at, z.name as zone_name 
+            SELECT 
+                p.id,
+                p.name,
+                p.zone_id,
+                p.general_field_id,
+                p.prices_field_id,
+                z.name AS zone_name
             FROM projects p
-            LEFT JOIN zones z ON p.zone = z.id
+            LEFT JOIN zones z ON p.zone_id = z.id
         """
-        params = []
-        if search:
-            query += " WHERE p.name ILIKE %s OR p.developer ILIKE %s"
-            params.extend([f"%{search}%", f"%{search}%"])
 
-        query += " ORDER BY p.created_at DESC LIMIT %s OFFSET %s"
+        params = []
+
+        if search:
+            query += " WHERE p.name ILIKE %s"
+            params.append(f"%{search}%")
+
+        query += " ORDER BY p.id ASC LIMIT %s OFFSET %s"
         params.extend([limit, skip])
 
         cur.execute(query, tuple(params))
         return cur.fetchall()
 
+
 def create_project(conn, project: schemas.ProjectCreate):
-    """Crea un nuevo proyecto en la base de datos."""
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        new_id = str(uuid.uuid4())
         query = """
-            INSERT INTO projects (
-                id, name, slug, zone, sub_zone, developer, maps_url, concept, total_units,
-                delivery_summary, brochure_slug, render_slug, tour_url, admin_type,
-                accepts_crypto, turn_key, has_ocean_view, condo_regime
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO projects (name, zone_id, general_field_id, prices_field_id)
+            VALUES (%s, %s, %s, %s)
             RETURNING id
         """
-        params = (
-            new_id, project.name, project.slug, project.zone, project.sub_zone, project.developer,
-            project.maps_url, project.concept, project.total_units, project.delivery_summary,
-            project.brochure_slug, project.render_slug, project.tour_url, project.admin_type,
-            project.accepts_crypto, project.turn_key, project.has_ocean_view, project.condo_regime
-        )
-        cur.execute(query, params)
-        new_project_id = cur.fetchone()['id']
+        cur.execute(query, (
+            project.name,
+            project.zone_id,
+            project.general_field_id,
+            project.prices_field_id
+        ))
+        new_id = cur.fetchone()["id"]
         conn.commit()
-        return get_project(conn, new_project_id)
+        return get_project(conn, new_id)
+
 
 def update_project(conn, project_id: uuid.UUID, project: schemas.ProjectUpdate):
-    """Actualiza un proyecto existente."""
     update_data = project.model_dump(exclude_unset=True)
+
     if not update_data:
         return get_project(conn, project_id)
 
     set_clause = ", ".join([f"{key} = %s" for key in update_data.keys()])
     values = list(update_data.values())
-    values.append(str(project_id))
+    values.append(project_id)
 
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        query = f"UPDATE projects SET {set_clause}, updated_at = NOW() WHERE id = %s"
-        cur.execute(query, tuple(values))
+        cur.execute(
+            f"UPDATE projects SET {set_clause} WHERE id = %s",
+            tuple(values)
+        )
         conn.commit()
+
     return get_project(conn, project_id)
+
 
 def delete_project(conn, project_id: uuid.UUID):
     """Elimina un proyecto por su ID."""
@@ -197,58 +228,69 @@ def get_units_by_status(conn):
         return cur.fetchall()
 
 # --- CRUD para Usuarios ---
-def get_user(conn, user_id: uuid.UUID):
+def get_user(conn, user_id: int):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute("SELECT * FROM users WHERE id = %s", (str(user_id),))
+        cur.execute("SELECT id, username, role, password_hash FROM users WHERE id = %s", (user_id,))
         return cur.fetchone()
 
 def get_users(conn, skip: int = 0, limit: int = 100, role_filter: str = ""):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         query = "SELECT * FROM users"
         params = []
-        
+
         if role_filter:
             query += " WHERE role = %s"
             params.append(role_filter)
-            
-        query += " ORDER BY created_at DESC LIMIT %s OFFSET %s"
+
+        query += " ORDER BY id DESC"
+        query += " LIMIT %s OFFSET %s"
+
         params.extend([limit, skip])
-        
+
         cur.execute(query, tuple(params))
         return cur.fetchall()
 
 def create_user(conn, user: schemas.UserCreate):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        # En un sistema real, aquí hashearías la contraseña
         cur.execute(
-            "INSERT INTO users (username, role, password_hash) VALUES (%s, %s, %s) RETURNING *",
-            (user.username, user.role, user.password)  # Nota: En producción, hashear la contraseña
+            """
+            INSERT INTO users (username, role, password_hash)
+            VALUES (%s, %s, %s)
+            RETURNING id
+            """,
+            (user.username, user.role, user.password)
         )
-        new_user = cur.fetchone()
+        new_id = cur.fetchone()["id"]
         conn.commit()
-        return new_user
+        return get_user(conn, new_id)
 
-def update_user(conn, user_id: uuid.UUID, user: schemas.UserUpdate):
+
+def update_user(conn, user_id: int, user: schemas.UserUpdate):
     update_data = user.model_dump(exclude_unset=True)
+
     if not update_data:
         return get_user(conn, user_id)
 
     set_clause = ", ".join([f"{key} = %s" for key in update_data.keys()])
     values = list(update_data.values())
-    values.append(str(user_id))
+    values.append(user_id)
 
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        query = f"UPDATE users SET {set_clause}, updated_at = NOW() WHERE id = %s"
-        cur.execute(query, tuple(values))
+        cur.execute(
+            f"UPDATE users SET {set_clause} WHERE id = %s",
+            tuple(values)
+        )
         conn.commit()
+
     return get_user(conn, user_id)
 
-def delete_user(conn, user_id: uuid.UUID):
+
+def delete_user(conn, user_id: int):
     with conn.cursor() as cur:
-        cur.execute("DELETE FROM users WHERE id = %s", (str(user_id),))
-        rowcount = cur.rowcount
+        cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        deleted = cur.rowcount
         conn.commit()
-        return rowcount
+        return deleted
 
 # --- CRUD para Unidades ---
 def get_unit(conn, unit_id: uuid.UUID):
@@ -312,3 +354,13 @@ def delete_unit(conn, unit_id: uuid.UUID):
         deleted_unit = cur.fetchone()
         conn.commit()
         return deleted_unit
+
+def get_all_projects(conn):
+    """Obtiene todos los proyectos con sus columnas principales."""
+    with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        cur.execute("""
+            SELECT id, name, zone, general_field_id, prices_field_id
+            FROM projects
+            ORDER BY id ASC
+        """)
+        return cur.fetchall()

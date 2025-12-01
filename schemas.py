@@ -24,57 +24,28 @@ class ZoneUpdate(BaseModel):
     description: Optional[str] = None
 
 class Zone(ZoneBase, BaseSchema):
-    id: UUID
-    created_at: datetime
-    updated_at: datetime
+    id: int
     project_count: Optional[int] = 0
+
 
 # --- Project Schemas ---
 class ProjectBase(BaseModel):
     name: str
-    slug: Optional[str] = None
-    zone: Optional[UUID] = None
-    sub_zone: Optional[str] = None
-    developer: Optional[str] = None
-    maps_url: Optional[str] = None
-    concept: Optional[str] = None
-    total_units: Optional[int] = 0
-    delivery_summary: Optional[str] = None
-    brochure_slug: Optional[str] = None
-    render_slug: Optional[str] = None
-    tour_url: Optional[str] = None
-    admin_type: Optional[str] = None
-    accepts_crypto: Optional[bool] = False
-    turn_key: Optional[bool] = False
-    has_ocean_view: Optional[bool] = False
-    condo_regime: Optional[bool] = False # Corregido a booleano
+    zone_id: Optional[int] = None
+    general_field_id: Optional[str] = None
+    prices_field_id: Optional[str] = None
 
 class ProjectCreate(ProjectBase):
     pass
 
-class ProjectUpdate(BaseModel): # Modelo específico para actualización con todos los campos opcionales
+class ProjectUpdate(BaseModel):
     name: Optional[str] = None
-    slug: Optional[str] = None
-    zone: Optional[UUID] = None
-    sub_zone: Optional[str] = None
-    developer: Optional[str] = None
-    maps_url: Optional[str] = None
-    concept: Optional[str] = None
-    total_units: Optional[int] = None
-    delivery_summary: Optional[str] = None
-    brochure_slug: Optional[str] = None
-    render_slug: Optional[str] = None
-    tour_url: Optional[str] = None
-    admin_type: Optional[str] = None
-    accepts_crypto: Optional[bool] = None
-    turn_key: Optional[bool] = None
-    has_ocean_view: Optional[bool] = None
-    condo_regime: Optional[bool] = None
+    zone_id: Optional[int] = None
+    general_field_id: Optional[str] = None
+    prices_field_id: Optional[str] = None
 
 class Project(ProjectBase, BaseSchema):
-    id: UUID
-    created_at: datetime
-    updated_at: datetime
+    id: int
 
 class ProjectWithZone(Project):
     zone_name: Optional[str] = None
@@ -149,21 +120,27 @@ class Detail(DetailBase, BaseSchema):
     created_at: datetime
 
 # --- User Schemas ---
+from pydantic import BaseModel
+from typing import Optional
+
 class UserBase(BaseModel):
     username: str
-    role: str
+    role: Optional[str]
 
 class UserCreate(UserBase):
     password: str
 
 class UserUpdate(BaseModel):
-    username: Optional[str] = None
-    role: Optional[str] = None
+    username: Optional[str]
+    password: Optional[str]
+    role: Optional[str]
 
-class User(UserBase, BaseSchema):
-    id: UUID
-    created_at: datetime
-    updated_at: datetime
+class User(UserBase):
+    id: int  # <- tu BD usa INTEGER, NO UUID
+
+    class Config:
+        orm_mode = True
+
 
 # --- Strategic Context Schemas ---
 class StrategicContextBase(BaseModel):

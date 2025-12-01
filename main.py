@@ -19,6 +19,7 @@ app.include_router(zones.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(units.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
+app.include_router(dashboard.router, prefix="/api")  
 
 # Servir el Frontend
 @app.get("/")
