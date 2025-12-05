@@ -1,10 +1,16 @@
 import uuid
+from fastapi import HTTPException
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import List, Optional
-import schemas # <-- CORRECCIÓN: Se cambió de 'from . import schemas' a una importación directa.
+import schemas
+import requests
 
-# --- CRUD para Zonas ---
+
+# ============================================================
+# =================== CRUD PARA ZONAS =========================
+# ============================================================
+
 def get_zone(conn, zone_id: int):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("SELECT id, name, description FROM zones WHERE id = %s", (zone_id,))
@@ -26,10 +32,8 @@ def get_zones(conn, skip: int = 0, limit: int = 100):
         """, (limit, skip))
         return cur.fetchall()
 
-
 def update_zone(conn, zone_id: int, zone: schemas.ZoneUpdate):
     update_data = zone.model_dump(exclude_unset=True)
-
     if not update_data:
         return get_zone(conn, zone_id)
 
@@ -43,7 +47,6 @@ def update_zone(conn, zone_id: int, zone: schemas.ZoneUpdate):
     
     return get_zone(conn, zone_id)
 
-
 def delete_zone(conn, zone_id: int):
     with conn.cursor() as cur:
         cur.execute("DELETE FROM zones WHERE id = %s", (zone_id,))
@@ -51,7 +54,6 @@ def delete_zone(conn, zone_id: int):
         conn.commit()
         return deleted
 
-    
 def create_zone(conn, zone: schemas.ZoneCreate):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute(
@@ -63,7 +65,11 @@ def create_zone(conn, zone: schemas.ZoneCreate):
         return get_zone(conn, new_id)
 
 
-# --- CRUD para Proyectos ---
+
+# ============================================================
+# ================= CRUD PARA PROYECTOS =======================
+# ============================================================
+
 def get_project(conn, project_id: uuid.UUID):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("""
@@ -79,7 +85,6 @@ def get_project(conn, project_id: uuid.UUID):
             WHERE p.id = %s
         """, (project_id,))
         return cur.fetchone()
-
 
 def get_projects(conn, skip: int = 0, limit: int = 100, search: str = ""):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -107,7 +112,6 @@ def get_projects(conn, skip: int = 0, limit: int = 100, search: str = ""):
         cur.execute(query, tuple(params))
         return cur.fetchall()
 
-
 def create_project(conn, project: schemas.ProjectCreate):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         query = """
@@ -124,7 +128,6 @@ def create_project(conn, project: schemas.ProjectCreate):
         new_id = cur.fetchone()["id"]
         conn.commit()
         return get_project(conn, new_id)
-
 
 def update_project(conn, project_id: uuid.UUID, project: schemas.ProjectUpdate):
     update_data = project.model_dump(exclude_unset=True)
@@ -145,16 +148,19 @@ def update_project(conn, project_id: uuid.UUID, project: schemas.ProjectUpdate):
 
     return get_project(conn, project_id)
 
-
 def delete_project(conn, project_id: uuid.UUID):
-    """Elimina un proyecto por su ID."""
     with conn.cursor() as cur:
         cur.execute("DELETE FROM projects WHERE id = %s", (str(project_id),))
         rowcount = cur.rowcount
         conn.commit()
         return rowcount
 
-# --- CRUD para Dashboard ---
+
+
+# ============================================================
+# =================== CRUD DASHBOARD ==========================
+# ============================================================
+
 def get_dashboard_stats(conn):
     stats = {}
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -227,7 +233,12 @@ def get_units_by_status(conn):
         """)
         return cur.fetchall()
 
-# --- CRUD para Usuarios ---
+
+
+# ============================================================
+# ==================== CRUD USUARIOS ==========================
+# ============================================================
+
 def get_user(conn, user_id: int):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("SELECT id, username, role, password_hash FROM users WHERE id = %s", (user_id,))
@@ -242,9 +253,7 @@ def get_users(conn, skip: int = 0, limit: int = 100, role_filter: str = ""):
             query += " WHERE role = %s"
             params.append(role_filter)
 
-        query += " ORDER BY id DESC"
-        query += " LIMIT %s OFFSET %s"
-
+        query += " ORDER BY id DESC LIMIT %s OFFSET %s"
         params.extend([limit, skip])
 
         cur.execute(query, tuple(params))
@@ -252,18 +261,16 @@ def get_users(conn, skip: int = 0, limit: int = 100, role_filter: str = ""):
 
 def create_user(conn, user: schemas.UserCreate):
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute(
-            """
+        cur.execute("""
             INSERT INTO users (username, role, password_hash)
             VALUES (%s, %s, %s)
             RETURNING id
-            """,
-            (user.username, user.role, user.password)
-        )
+        """,
+        (user.username, user.role, user.password))
+        
         new_id = cur.fetchone()["id"]
         conn.commit()
         return get_user(conn, new_id)
-
 
 def update_user(conn, user_id: int, user: schemas.UserUpdate):
     update_data = user.model_dump(exclude_unset=True)
@@ -284,7 +291,6 @@ def update_user(conn, user_id: int, user: schemas.UserUpdate):
 
     return get_user(conn, user_id)
 
-
 def delete_user(conn, user_id: int):
     with conn.cursor() as cur:
         cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
@@ -292,71 +298,64 @@ def delete_user(conn, user_id: int):
         conn.commit()
         return deleted
 
-# --- CRUD para Unidades ---
-def get_unit(conn, unit_id: uuid.UUID):
-    with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute("SELECT * FROM units WHERE id = %s", (str(unit_id),))
-        return cur.fetchone()
+
+
+# ============================================================
+# =================== CRUD UNIDADES (SUPABASE2) ===============
+# ============================================================
+
+def _validate_uuid_str(id_str: str):
+    try:
+        return str(uuid.UUID(str(id_str)))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid UUID")
+
+
+def get_unit(conn, unit_id: str):
+    unit_id = _validate_uuid_str(unit_id)
+    rows = conn.select("units", {"id": f"eq.{unit_id}"})
+    return rows[0] if rows else None
+
 
 def get_all_units(conn, skip: int = 0, limit: int = 1000):
-    with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute("""
-            SELECT u.*, p.name as project_name 
-            FROM units u 
-            LEFT JOIN projects p ON u.project_id = p.id 
-            ORDER BY p.name, u.unit_identifier 
-            LIMIT %s OFFSET %s
-        """, (limit, skip))
-        return cur.fetchall()
+    rows = conn.select("units")
+    return rows[skip: skip + limit]
 
-def get_units_by_project(conn, project_id: uuid.UUID):
-    with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute("SELECT * FROM units WHERE project_id = %s ORDER BY unit_identifier", (str(project_id),))
-        return cur.fetchall()
+
+def get_units_by_project(conn, project_id: str):
+    project_id = _validate_uuid_str(project_id)
+    rows = conn.select("units", {"project_id": f"eq.{project_id}"})
+    return rows
+
 
 def create_unit(conn, unit: schemas.UnitCreate):
-    with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute(
-            """
-            INSERT INTO units (
-                project_id, unit_identifier, typology, level, 
-                total_area_sqm, status, delivery_date, price_list_url
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING *
-            """,
-            (
-                unit.project_id, unit.unit_identifier, unit.typology, unit.level,
-                unit.total_area_sqm, unit.status, unit.delivery_date, unit.price_list_url
-            )
-        )
-        new_unit = cur.fetchone()
-        conn.commit()
-        return new_unit
+    payload = unit.model_dump() if hasattr(unit, "model_dump") else unit.dict()
+    created = conn.insert("units", payload)
+    return created[0] if isinstance(created, list) and created else created
 
-def update_unit(conn, unit_id: uuid.UUID, unit: schemas.UnitUpdate):
-    update_data = unit.model_dump(exclude_unset=True)
-    if not update_data:
+
+def update_unit(conn, unit_id: str, unit: schemas.UnitUpdate):
+    unit_id = _validate_uuid_str(unit_id)
+    payload = unit.model_dump(exclude_unset=True)
+    if not payload:
         return get_unit(conn, unit_id)
 
-    set_clause = ", ".join([f"{key} = %s" for key in update_data.keys()])
-    values = list(update_data.values())
-    values.append(str(unit_id))
+    updated = conn.update("units", {"id": unit_id}, payload)
+    return updated[0] if isinstance(updated, list) and updated else updated
 
-    with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        query = f"UPDATE units SET {set_clause}, updated_at = NOW() WHERE id = %s"
-        cur.execute(query, tuple(values))
-        conn.commit()
-    return get_unit(conn, unit_id)
 
-def delete_unit(conn, unit_id: uuid.UUID):
-    with conn.cursor(cursor_factory=RealDictCursor) as cur:
-        cur.execute("DELETE FROM units WHERE id = %s RETURNING *", (str(unit_id),))
-        deleted_unit = cur.fetchone()
-        conn.commit()
-        return deleted_unit
+def delete_unit(conn, unit_id: str):
+    unit_id = _validate_uuid_str(unit_id)
+    res = conn.delete("units", {"id": unit_id})
+    return res
+
+
+
+# ============================================================
+# ================ UTILIDAD EXTRA - PROYECTOS =================
+# ============================================================
 
 def get_all_projects(conn):
-    """Obtiene todos los proyectos con sus columnas principales."""
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
         cur.execute("""
             SELECT id, name, zone, general_field_id, prices_field_id

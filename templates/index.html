@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miki.ai - Plataforma de Gestión</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a102a;
+            color: #e0e0e0;
+        }
+
+        /* Estilo para el efecto de vidrio (Glassmorphism) */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Fondo con gradiente y partículas sutiles */
+        .main-background {
+            background-image: radial-gradient(circle at 1% 1%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                              radial-gradient(circle at 99% 99%, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal {
+            display: none;
+        }
+        .modal.active {
+            display: flex;
+        }
+
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="main-background">
+
+    <div class="relative min-h-screen lg:flex">
+        <!-- Barra Lateral de Navegación -->
+        <aside id="sidebar" class="bg-black/30 lg:bg-transparent fixed inset-y-0 left-0 w-64 z-30 transform -translate-x-full transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex-shrink-0">
+            <div class="glass-effect h-full m-0 lg:m-4 rounded-none lg:rounded-2xl flex flex-col">
+                <div class="flex items-center justify-center h-20 border-b border-white/10 flex-shrink-0">
+                    <h1 class="text-2xl font-bold text-white">Miki<span class="bg-red-600 px-2 rounded-md ml-1 text-white">ai</span></h1>
+                </div>
+                <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                    <a href="#" data-section="dashboard" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" data-section="projects" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="building-2" class="w-5 h-5 mr-3"></i>
+                        Proyectos
+                    </a>
+                    <a href="#" data-section="units" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="home" class="w-5 h-5 mr-3"></i>
+                        Unidades
+                    </a>
+                    <a href="#" data-section="users" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="users" class="w-5 h-5 mr-3"></i>
+                        Usuarios
+                    </a>
+                    <a href="#" data-section="zones" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="map-pin" class="w-5 h-5 mr-3"></i>
+                        Zonas
+                    </a>
+                     <a href="#" data-section="config" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="settings" class="w-5 h-5 mr-3"></i>
+                        Configuración
+                    </a>
+                </nav>
+                <div class="p-4 border-t border-white/10 flex-shrink-0">
+                     <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-300 hover:bg-white/5 rounded-lg transition-colors">
+                        <i data-lucide="log-out" class="w-5 h-5 mr-3 text-red-500"></i>
+                        Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Cabecera -->
+            <header class="h-20 flex items-center justify-between px-4 sm:px-8">
+                 <!-- Botón de Menú para Móvil -->
+                <button id="menu-button" class="lg:hidden p-2 rounded-md text-gray-300 hover:bg-white/10">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+
+                <div class="flex-1 hidden sm:block">
+                    <h2 id="header-title" class="text-xl md:text-2xl font-semibold text-white">Dashboard</h2>
+                    <p id="header-subtitle" class="text-xs md:text-sm text-gray-400">Resumen visual de la información más importante.</p>
+                </div>
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <div class="relative">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"></i>
+                        <input type="text" id="search-input" placeholder="Buscar..." class="pl-10 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-red-500 w-32 sm:w-48 md:w-64 transition-all">
+                    </div>
+                    <button class="p-2 rounded-full hover:bg-white/10 transition-colors">
+                        <i data-lucide="bell" class="w-6 h-6 text-white"></i>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <img src="https://placehold.co/40x40/e2e8f0/334155?text=A" alt="Avatar de usuario" class="w-10 h-10 rounded-full">
+                        <div class="hidden md:block">
+                            <p class="font-semibold text-white text-sm">Admin</p>
+                            <p class="text-xs text-gray-400">rol: administrador</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Área de Contenido -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8 sm:pt-4">
+                <!-- Dashboard Content -->
+                <div id="dashboard-content" class="content-section">
+                    <h1 class="text-3xl font-bold text-white mb-8">Dashboard</h1>
+
+                    <!-- Loading Spinner for Dashboard -->
+                    <div id="dashboard-loading" class="flex justify-center items-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+                    </div>
+
+                    <!-- Dashboard Content Container -->
+                    <div id="dashboard-data" style="display: none;">
+                        <!-- KPI Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="glass-effect rounded-xl p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm font-medium">Total Proyectos</p>
+                                        <p id="total-projects" class="text-2xl font-bold text-white">-</p>
+                                    </div>
+                                    <div class="p-3 rounded-full bg-blue-500/20">
+                                        <i data-lucide="building-2" class="w-6 h-6 text-blue-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-effect rounded-xl p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm font-medium">Unidades Disponibles</p>
+                                        <p id="available-units" class="text-2xl font-bold text-white">-</p>
+                                    </div>
+                                    <div class="p-3 rounded-full bg-green-500/20">
+                                        <i data-lucide="home" class="w-6 h-6 text-green-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-effect rounded-xl p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm font-medium">Unidades Vendidas</p>
+                                        <p id="sold-units" class="text-2xl font-bold text-white">-</p>
+                                    </div>
+                                    <div class="p-3 rounded-full bg-red-500/20">
+                                        <i data-lucide="trending-up" class="w-6 h-6 text-red-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-effect rounded-xl p-6 mb-8">
+                                <h2 class="text-white text-lg font-semibold mb-4">Mensajes por día (WhatsApp)</h2>
+                                <canvas id="chart-daily"></canvas>
+                            </div>
+
+                            <!-- ============================================= -->
+<!--       GRÁFICA: MENSAJES POR DÍA              -->
+<!-- ============================================= -->
+<div class="glass-effect rounded-xl p-6 mb-8">
+    <h2 class="text-white text-lg font-semibold mb-4">Mensajes por día (WhatsApp)</h2>
+    <canvas id="chart-daily"></canvas>
+</div>
+
+<!-- ============================================= -->
+<!--   GRÁFICA: MENSAJES POR USUARIO               -->
+<!-- ============================================= -->
+<div class="glass-effect rounded-xl p-6 mb-8">
+    <h2 class="text-white text-lg font-semibold mb-4">Mensajes por usuario</h2>
+    <canvas id="chart-by-user"></canvas>
+</div>
+
+<!-- ============================================= -->
+<!--      GRÁFICA: PALABRAS FRECUENTES            -->
+<!-- ============================================= -->
+<div class="glass-effect rounded-xl p-6 mb-8">
+    <h2 class="text-white text-lg font-semibold mb-4">Preguntas / palabras frecuentes</h2>
+    <canvas id="chart-faq"></canvas>
+</div>
+
+<!-- ============================================= -->
+<!--         TABLA: ÚLTIMOS MENSAJES               -->
+<!-- ============================================= -->
+<div class="glass-effect rounded-xl p-6 mb-8">
+    <h2 class="text-white text-lg font-semibold mb-4">Últimos mensajes</h2>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-gray-900 text-white rounded-xl">
+            <thead class="bg-gray-800">
+                <tr>
+                    <th class="px-4 py-3 text-left">Usuario</th>
+                    <th class="px-4 py-3 text-left">Mensaje</th>
+                    <th class="px-4 py-3 text-left">Fecha</th>
+                </tr>
+            </thead>
+            <tbody id="table-last-messages"></tbody>
+        </table>
+    </div>
+</div>
+
+
+                            <div class="glass-effect rounded-xl p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm font-medium">Zonas Activas</p>
+                                        <p id="total-zones" class="text-2xl font-bold text-white">-</p>
+                                    </div>
+                                    <div class="p-3 rounded-full bg-purple-500/20">
+                                        <i data-lucide="map-pin" class="w-6 h-6 text-purple-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                            <!-- Projects by Zone Chart -->
+                            <div class="glass-effect rounded-xl p-6">
+                                <h3 class="text-lg font-semibold text-white mb-4">Proyectos por Zona</h3>
+                                <div id="projects-chart" class="h-64 flex items-center justify-center text-gray-400">
+                                    <div class="text-center">
+                                        <i data-lucide="pie-chart" class="w-12 h-12 mx-auto mb-2"></i>
+                                        <p>Cargando gráfica...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Units by Status Chart -->
+                            <div class="glass-effect rounded-xl p-6">
+                                <h3 class="text-lg font-semibold text-white mb-4">Estado de Unidades</h3>
+                                <div id="units-chart" class="h-64 flex items-center justify-center text-gray-400">
+                                    <div class="text-center">
+                                        <i data-lucide="bar-chart-3" class="w-12 h-12 mx-auto mb-2"></i>
+                                        <p>Cargando gráfica...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="glass-effect rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-white mb-4">Actividad Reciente</h3>
+                            <div id="recent-activity" class="space-y-3">
+                                <div class="flex items-center justify-center py-8 text-gray-400">
+                                    <i data-lucide="activity" class="w-6 h-6 mr-2"></i>
+                                    <span>Cargando actividad reciente...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="projects-content" class="content-section">
+                    <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                            <h3 class="text-xl font-semibold text-white">Listado de Proyectos</h3>
+                            <button id="add-project-btn" class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-red-600/20 w-full sm:w-auto">
+                                <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+                                Añadir Proyecto
+                            </button>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="loading" class="flex justify-center items-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        </div>
+
+                        <!--Tabla de Datos Responsiva -->
+                        <div id="projects-table" class="overflow-x-auto" style="display: none;">
+                            <table class="w-full text-sm text-left min-w-[800px]">
+                                <thead class="border-b border-white/20">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 font-medium">Nombre del Proyecto</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Zona</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Desarrollador</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Unidades</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Features</th>
+                                        <th scope="col" class="px-4 py-3 font-medium text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projects-tbody">
+                                    <!-- Los proyectos se cargarán dinámicamente aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mensaje cuando no hay proyectos -->
+                        <div id="no-projects" class="text-center py-8 text-gray-400" style="display: none;">
+                            <i data-lucide="folder-x" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                            <p>No hay proyectos disponibles</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Units Section -->
+                    <div id="units-content" class="content-section">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-white">Gestión de Unidades</h2>
+                            <button id="new-unit-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>Nueva Unidad</span>
+                            </button>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="glass-effect rounded-xl p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-white mb-4">Filtros</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Proyecto</label>
+                                    <select id="filter-project" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Todos los proyectos</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Estado</label>
+                                    <select id="filter-status" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Todos los estados</option>
+                                        <option value="Disponible">Disponible</option>
+                                        <option value="Reservada">Reservada</option>
+                                        <option value="Vendida">Vendida</option>
+                                        <option value="En construcción">En construcción</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Tipología</label>
+                                    <select id="filter-typology" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Todas las tipologías</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Buscar</label>
+                                    <input type="text" id="filter-search" placeholder="Buscar por identificador..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            <div class="flex justify-end mt-4 space-x-3">
+                                <button id="clear-filters-btn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                    Limpiar Filtros
+                                </button>
+                                <button id="apply-filters-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                    Aplicar Filtros
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Units Table -->
+                        <div class="glass-effect rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-white">Lista de Unidades</h3>
+                                <div class="text-sm text-gray-300">
+                                    <span id="units-count">0</span> unidades encontradas
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="border-b border-gray-700">
+                                            <th class="pb-3 text-gray-300 font-medium">Proyecto</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Identificador</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Tipología</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Nivel</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Área (m²)</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Estado</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Entrega</th>
+                                            <th class="pb-3 text-gray-300 font-medium">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="units-table-body" class="text-gray-300">
+                                        <!-- Units will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div id="units-loading" class="flex justify-center items-center py-8 hidden">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                                <span class="ml-2 text-gray-300">Cargando unidades...</span>
+                            </div>
+
+                            <div id="no-units" class="text-center py-8 text-gray-400 hidden">
+                                <i data-lucide="home" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+                                <p>No se encontraron unidades</p>
+                            </div>
+                        </div>
+                    </div>
+
+                 <div id="users-content" class="content-section">
+                    <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                            <h3 class="text-xl font-semibold text-white">Gestión de Usuarios</h3>
+                            <button id="add-user-btn" class="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-blue-600/20 w-full sm:w-auto">
+                                <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+                                Añadir Usuario
+                            </button>
+                        </div>
+
+                        <!-- Filtros de usuarios -->
+                        <div class="glass-effect rounded-xl p-4 mb-6 bg-white/5">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Filtrar por rol</label>
+                                    <select id="user-role-filter" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                        <option value="">Todos los roles</option>
+                                        <option value="admin">Administrador</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="user">Usuario</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Buscar usuario</label>
+                                    <input type="text" id="user-search" placeholder="Buscar por nombre..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="flex items-end">
+                                    <button id="clear-user-filters" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors w-full">
+                                        Limpiar Filtros
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="users-loading" class="flex justify-center items-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        </div>
+
+                        <!-- Tabla de Usuarios -->
+                        <div id="users-table" class="overflow-x-auto" style="display: none;">
+                            <table class="w-full text-sm text-left">
+                                <thead class="border-b border-white/20">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 font-medium">Usuario</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Rol</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Estado</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Creado</th>
+                                        <th scope="col" class="px-4 py-3 font-medium text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-tbody">
+                                    <!-- Los usuarios se cargarán dinámicamente aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mensaje cuando no hay usuarios -->
+                        <div id="no-users" class="text-center py-8 text-gray-400" style="display: none;">
+                            <i data-lucide="users" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                            <p>No hay usuarios disponibles</p>
+                        </div>
+                    </div>
+                </div>
+                 <div id="zones-content" class="content-section">
+                    <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                            <h3 class="text-xl font-semibold text-white">Gestión de Zonas</h3>
+                            <button id="add-zone-btn" class="flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-lg shadow-purple-600/20 w-full sm:w-auto">
+                                <i data-lucide="plus" class="w-5 h-5 mr-2"></i>
+                                Añadir Zona
+                            </button>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="zones-loading" class="flex justify-center items-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        </div>
+
+                        <!-- Tabla de Zonas -->
+                        <div id="zones-table" class="overflow-x-auto" style="display: none;">
+                            <table class="w-full text-sm text-left">
+                                <thead class="border-b border-white/20">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 font-medium">Nombre de la Zona</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Descripción</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Proyectos</th>
+                                        <th scope="col" class="px-4 py-3 font-medium">Creada</th>
+                                        <th scope="col" class="px-4 py-3 font-medium text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zones-tbody">
+                                    <!-- Las zonas se cargarán dinámicamente aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mensaje cuando no hay zonas -->
+                        <div id="no-zones" class="text-center py-8 text-gray-400" style="display: none;">
+                            <i data-lucide="map-pin" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                            <p>No hay zonas disponibles</p>
+                        </div>
+                    </div>
+                </div>
+                 <div id="config-content" class="content-section">
+                    <h1 class="text-3xl font-bold text-white mb-8">Configuración</h1>
+                    <p class="text-gray-400">Contenido de Configuración...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para Crear/Editar Zona -->
+    <div id="zone-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
+        <div class="glass-effect rounded-2xl p-6 m-4 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="zone-modal-title" class="text-xl font-semibold text-white">Nueva Zona</h3>
+                <button id="close-zone-modal" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="zone-form">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de la Zona *</label>
+                        <input type="text" id="zone-name" name="name" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" placeholder="Ej: Tulum, Playa del Carmen">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Descripción</label>
+                        <textarea id="zone-description" name="description" rows="3" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" placeholder="Descripción de la zona geográfica"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" id="cancel-zone-btn" class="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Crear/Editar Usuario -->
+    <div id="user-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
+        <div class="glass-effect rounded-2xl p-6 m-4 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="user-modal-title" class="text-xl font-semibold text-white">Nuevo Usuario</h3>
+                <button id="close-user-modal" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="user-form">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de Usuario *</label>
+                        <input type="text" id="user-username" name="username" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" placeholder="Nombre de usuario">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Rol *</label>
+                        <select id="user-role" name="role" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white">
+                            <option value="">Seleccionar rol</option>
+                            <option value="admin">Administrador</option>
+                            <option value="manager">Manager</option>
+                            <option value="user">Usuario</option>
+                        </select>
+                    </div>
+                    <div id="password-field">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Contraseña *</label>
+                        <input type="password" id="user-password" name="password" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white" placeholder="Contraseña">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" id="cancel-user-btn" class="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Crear/Editar Proyecto -->
+    <div id="project-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
+        <div class="glass-effect rounded-2xl p-6 m-4 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-semibold text-white">Nuevo Proyecto</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="project-form">
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nombre del Proyecto *</label>
+                        <input type="text" id="project-name" name="name" required class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Slug</label>
+                        <input type="text" id="project-slug" name="slug" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Desarrollador</label>
+                        <input type="text" id="project-developer" name="developer" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Sub Zona</label>
+                        <input type="text" id="project-subzone" name="sub_zone" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Total de Unidades</label>
+                        <input type="number" id="project-units" name="total_units" min="0" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">URL de Google Maps</label>
+                        <input type="url" id="project-maps" name="maps_url" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Concepto</label>
+                        <textarea id="project-concept" name="concept" rows="3" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Resumen de Entrega</label>
+                        <input type="text" id="project-delivery" name="delivery_summary" class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="project-crypto" name="accepts_crypto" class="mr-2">
+                                <span class="text-gray-300 text-sm">Acepta Crypto</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="project-turnkey" name="turn_key" class="mr-2">
+                                <span class="text-gray-300 text-sm">Llave en Mano</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="project-ocean" name="has_ocean_view" class="mr-2">
+                                <span class="text-gray-300 text-sm">Vista al Mar</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="project-condo" name="condo_regime" class="mr-2">
+                                <span class="text-gray-300 text-sm">Régimen Condo</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" id="cancel-btn" class="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chart.js (externo) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Scripts locales: orden pensado para dependencias -->
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/projects.js"></script>
+    <script src="/static/js/units.js"></script>
+    <script src="/static/js/users.js"></script>
+    <script src="/static/js/zones.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/chart.js"></script>
+
+</body>
+</html>

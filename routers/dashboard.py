@@ -9,7 +9,7 @@ router = APIRouter(
 )
 
 # ==================================================
-# 1) KPIs del dashboard (el front YA los carga)
+# 1) KPIs DEL DASHBOARD
 # ==================================================
 @router.get("/stats/")
 def get_dashboard_stats():
@@ -22,10 +22,10 @@ def get_dashboard_stats():
 
 
 # ==================================================
-# 2) MENSAJES POR DÍA — EL FRONT LO LLAMA DIRECTO
+# 2) MENSAJES POR DÍA
 # ==================================================
 @router.get("/whatsapp/daily/")
-def get_daily_whatsapp_stats(conn=Depends(get_supabase)):
+def get_whatsapp_messages_by_day(conn = Depends(get_supabase)):
     rows = conn("historial_conversaciones_diarias")
 
     contador = {}
@@ -41,10 +41,10 @@ def get_daily_whatsapp_stats(conn=Depends(get_supabase)):
 
 
 # ==================================================
-# 3) MENSAJES POR USUARIO — EL FRONT LO USARÁ PARA GRAFICA
+# 3) MENSAJES POR USUARIO
 # ==================================================
 @router.get("/whatsapp/by-user/")
-def get_messages_by_user(conn=Depends(get_supabase)):
+def get_messages_by_user(conn = Depends(get_supabase)):
     rows = conn("historial_conversaciones_diarias")
 
     contador = {}
@@ -60,10 +60,10 @@ def get_messages_by_user(conn=Depends(get_supabase)):
 
 
 # ==================================================
-# 4) PREGUNTAS/PALABRAS MÁS FRECUENTES
+# 4) FAQ (PREGUNTAS FRECUENTES)
 # ==================================================
 @router.get("/whatsapp/faq/")
-def get_faq_from_messages(conn=Depends(get_supabase), top: int = 15):
+def get_faq_from_messages(conn = Depends(get_supabase), top: int = 15):
 
     rows = conn("historial_conversaciones_diarias")
 
@@ -90,18 +90,6 @@ def get_faq_from_messages(conn=Depends(get_supabase), top: int = 15):
         for palabra, total in conteo.most_common(top)
     ]
 
-
-# ==================================================
-# 5) ÚLTIMOS MENSAJES — PARA TABLA
-# ==================================================
 @router.get("/whatsapp/last/")
-def get_last_messages(conn=Depends(get_supabase), limit: int = 20):
-    rows = conn("historial_conversaciones_diarias")
-
-    rows_sorted = sorted(
-        rows,
-        key=lambda x: x.get("fecha_creacion") or "",
-        reverse=True
-    )
-
-    return rows_sorted[:limit]
+def placeholder_last_messages():
+    return []

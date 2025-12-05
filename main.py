@@ -1,10 +1,7 @@
-# archivo: main.py (Versión final y limpia)
-
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
-from routers import projects, zones, users
-from routers import dashboard
-from routers import units
+from fastapi.staticfiles import StaticFiles
+from routers import projects, zones, users, dashboard, units
 import uvicorn
 
 app = FastAPI(
@@ -13,18 +10,21 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Incluir los routers en la aplicación principal
+# Servir archivos estáticos
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Routers (respetando tu prefijo /api)
 app.include_router(projects.router, prefix="/api")
 app.include_router(zones.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(units.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
-app.include_router(dashboard.router, prefix="/api")  
 
-# Servir el Frontend
+# Servir tu index.html desde la carpeta templates
 @app.get("/")
 def read_root():
-    return FileResponse('index.html')
+    return FileResponse("templates/index.html")
 
-# Servir archivos estáticos si es necesario
-from fastapi.staticfiles import StaticFiles
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)

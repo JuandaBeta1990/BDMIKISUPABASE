@@ -1,4 +1,4 @@
-# archivo: schemas.py (Versión Completa y Final - 04 de Agosto, 2025)
+# archivo: schemas.py (Versión Completa y Final - Corregida)
 
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
@@ -64,12 +64,6 @@ class UnitBase(BaseModel):
 class UnitCreate(UnitBase):
     pass
 
-class Unit(UnitBase, BaseSchema):
-    id: UUID
-    created_at: datetime
-    updated_at: datetime
-
-# NUEVA CLASE para la actualización
 class UnitUpdate(BaseModel):
     unit_identifier: Optional[str] = None
     typology: Optional[str] = None
@@ -78,6 +72,12 @@ class UnitUpdate(BaseModel):
     status: Optional[str] = None
     delivery_date: Optional[str] = None
     price_list_url: Optional[str] = None
+
+class Unit(UnitBase, BaseSchema):
+    id: UUID
+    created_at: datetime
+    updated_at: datetime
+
 
 # --- Payment Option Schemas ---
 class PaymentOptionBase(BaseModel):
@@ -120,26 +120,20 @@ class Detail(DetailBase, BaseSchema):
     created_at: datetime
 
 # --- User Schemas ---
-from pydantic import BaseModel
-from typing import Optional
-
 class UserBase(BaseModel):
     username: str
-    role: Optional[str]
+    role: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
 
 class UserUpdate(BaseModel):
-    username: Optional[str]
-    password: Optional[str]
-    role: Optional[str]
+    username: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[str] = None
 
-class User(UserBase):
-    id: int  # <- tu BD usa INTEGER, NO UUID
-
-    class Config:
-        orm_mode = True
+class User(UserBase, BaseSchema):
+    id: int  # Tu BD usa INTEGER, NO UUID
 
 
 # --- Strategic Context Schemas ---
